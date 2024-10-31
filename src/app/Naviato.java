@@ -17,7 +17,7 @@ public class Naviato extends Application {
     @Override
     public void start(Stage stage) throws Exception {
         Label label = new Label();
-        label.setText("Hello World");
+        label.setText("Hello Space");
         label.setTextFill(Color.WHITE);
         label.setBackground(new Background(new BackgroundFill(Color.web("#272727"), null, null)));
         label.setPrefWidth(400);
