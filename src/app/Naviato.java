@@ -27,4 +27,5 @@ public class Naviato extends Application {
         stage.setTitle("Naviato");
         stage.show();
     }
+
 }
