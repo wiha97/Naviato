@@ -1,45 +1,31 @@
 package models;
 
-import java.awt.*;
-import java.util.Arrays;
+public abstract class Ship {
+    protected int health;
+    protected String name;
+    protected int size;
+    protected String color;
 
-public class Ship {
-    private int health;
-    private ShipClass shipClass;
-    private Point position;
+    public void damage(){
+        health--;
+        if(health <= 0){
 
-    public Ship(int type){
-        shipClass = ShipClass.getShipClass(type);
-        health = type;
+        }
     }
 
-    public ShipClass getShipClass(){
-        return shipClass;
+    public String getName() {
+        return name;
     }
 
-    private enum ShipClass {
-        CARRIER(5),
-        CRUISER(4),
-        DESTROYER(3),
-        SUBMARINE(2);
+    public int getSize(){
+        return size;
+    }
 
-        private int size;
+    public int getHealth(){
+        return health;
+    }
 
-        ShipClass(int size){
-            this.size = size;
-        }
-
-        public int getSize() {
-            return size;
-        }
-
-        public static ShipClass getShipClass(int type){
-//            for (ShipClass c : ShipClass.values()){
-//                if(c.size == type)
-//                    return c;
-//            }
-            Arrays.stream(ShipClass.values()).filter(s -> s.size == type).findFirst();
-            return null;
-        }
+    public String getColor() {
+        return color;
     }
 }
