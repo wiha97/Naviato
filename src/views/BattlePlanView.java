@@ -5,18 +5,16 @@ import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
-import javafx.scene.input.MouseButton;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 import models.GameBoard;
 import models.Ship;
 import models.Square;
 
-public class PlacementView {
+public class BattlePlanView {
     private GameBoard board = new GameBoard();
     private int squareSize = 50;
     private int gap = 2;
@@ -37,11 +35,13 @@ public class PlacementView {
 
     void play() {
         pp = boardPane();
-        AnchorPane pane = playPane();
-        Scene scene = new Scene(pane);
-        scene.getStylesheets().add("style.css");
+//        AnchorPane pane = playPane();
+        Scene scene = new Scene(basePane());
+        scene.getStylesheets().add("battleplan.css");
         pStage.setScene(scene);
-        placeShips();
+        pStage.setWidth(700);
+        pStage.setHeight(800);
+//        placeShips();
     }
 
     private void placeShips() {
@@ -54,15 +54,11 @@ public class PlacementView {
                     n.setStyle("-fx-background-color:transparent;");
                     int idx = s;
                     n.setOnMouseClicked(event -> {
-                        if(event.getButton() == MouseButton.SECONDARY)
-                            placeShips();
-                        else {
-                            Square sq = board.getSquares()[idx];
-                            if(sq.hitSquare().toLowerCase().contains("hit"))
-                                n.setStyle("-fx-background-color:maroon;");
-                            else
-                                n.setStyle("-fx-background-color:blue;");
-                        }
+                        Square sq = board.getSquares()[idx];
+                        if (sq.hitSquare().toLowerCase().contains("hit"))
+                            n.setStyle("-fx-background-color:maroon;");
+                        else
+                            n.setStyle("-fx-background-color:blue;");
                     });
                     s++;
                 }
@@ -97,8 +93,40 @@ public class PlacementView {
         new Thread(runner).start();
     }
 
-    private AnchorPane playPane() {
-        AnchorPane pane = new AnchorPane();
+    private VBox basePane() {
+        VBox pane = new VBox();
+        Label title = new Label();
+        HBox hBox = new HBox();
+        HBox btnBox = new HBox();
+        Label rndBtn = new Label();
+        Label playBtn = new Label();
+//        pane.setPrefWidth(400);
+//        pane.setPrefHeight(600);
+        title.setText("BATTLEPLAN");
+        title.setId("title");
+        rndBtn.setId("rndBtn");
+        rndBtn.setText("RANDOMIZE");
+        rndBtn.setOnMouseClicked((e) -> placeShips());
+        playBtn.setId("playBtn");
+        playBtn.setText("READY UP");
+
+        hBox.getChildren().add(playPane());
+        hBox.setAlignment(Pos.CENTER);
+
+        btnBox.getChildren().addAll(rndBtn, playBtn);
+        btnBox.setAlignment(Pos.CENTER);
+        btnBox.setSpacing(15);
+        btnBox.setId("btnBox");
+
+//        pane.setSpacing(50);
+        pane.getChildren().addAll(title, hBox, btnBox);
+        pane.setAlignment(Pos.TOP_CENTER);
+        pane.setId("basePane");
+        return pane;
+    }
+
+    private VBox playPane() {
+        VBox pane = new VBox();
         VBox stack = new VBox();
         HBox rows = new HBox();
         stack.getChildren().add(topRow());
@@ -108,6 +136,7 @@ public class PlacementView {
         stack.getChildren().add(rows);
         stack.getChildren().add(topRow());
         pane.getChildren().add(stack);
+        pane.setId("playPane");
         return pane;
     }
 
@@ -132,15 +161,6 @@ public class PlacementView {
 
             boardCell.setText("" + square.getCoordinate());
 
-            boardCell.setOnMouseClicked(event -> {
-//                board.placeShip(board.getoSquares().indexOf(square), event.getButton() == MouseButton.SECONDARY);
-//                play();
-                if(event.getButton() == MouseButton.SECONDARY)
-                    placeShips();
-//                System.out.println(square.hitSquare());
-            });
-//            boardCell.setStyle(css + "-fx-background-color:" + square.getColor() + "; -fx-text-fill:transparent;");
-
 
             pane.getChildren().add(boardCell);
 
@@ -158,7 +178,7 @@ public class PlacementView {
         int i = 1;
         Rectangle rect = new Rectangle();
         rect.setWidth(squareSize / 2d);
-        rect.setFill(Color.web("#272727"));
+//        rect.setFill(Color.web("#272727"));
         box.getChildren().add(rect);
         for (char c : chArr) {
             Label label = new Label();
@@ -166,12 +186,12 @@ public class PlacementView {
             label.setPrefHeight(squareSize / 2d);
             label.setLayoutX(gap + (squareSize + gap) * i);
             label.setAlignment(Pos.CENTER);
-            label.setStyle("-fx-background-color:#272727;-fx-text-fill:white;-fx-border-color:gray;");
+            label.setStyle("-fx-text-fill:white;-fx-border-color:gray;-fx-border-width: 0 1 0 1;");
             label.setText("" + c);
             box.getChildren().add(label);
             i++;
         }
-        box.setStyle("-fx-background-color:#272727;");
+//        box.setStyle("-fx-background-color:#272727;");
         return box;
     }
 
@@ -183,7 +203,7 @@ public class PlacementView {
             label.setPrefHeight(squareSize);
             label.setLayoutX(gap + (squareSize + gap) * i);
             label.setAlignment(Pos.CENTER);
-            label.setStyle("-fx-background-color:#272727;-fx-text-fill:white;-fx-border-color:gray;");
+            label.setStyle("-fx-text-fill:white;-fx-border-color:gray;-fx-border-width: 1 0 1 0;");
             label.setText("" + i);
             box.getChildren().add(label);
         }
