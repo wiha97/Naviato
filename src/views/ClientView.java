@@ -1,6 +1,5 @@
 package views;
 
-import javafx.application.Application;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -9,13 +8,13 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
+import managers.ViewManager;
 import models.GameBoard;
 import network.ClientHandler;
 
 
-public class ClientView extends Application {
-    @Override
-    public void start(Stage stage) throws Exception {
+public class ClientView {
+    public void start(Stage stage) {
 
         GameBoard gameBoard = new GameBoard();
         gameBoard.generateField();
@@ -47,7 +46,7 @@ public class ClientView extends Application {
             ClientHandler clientHandler = new ClientHandler(IP,port);
             Thread clientThread = new Thread(clientHandler);
             clientThread.start();
-
+            ViewManager.planView();
 
         });
 

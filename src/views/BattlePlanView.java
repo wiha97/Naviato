@@ -37,7 +37,7 @@ public class BattlePlanView {
         pp = boardPane();
 //        AnchorPane pane = playPane();
         Scene scene = new Scene(basePane());
-        scene.getStylesheets().add("battleplan.css");
+        scene.getStylesheets().add("style.css");
         pStage.setScene(scene);
         pStage.setWidth(700);
         pStage.setHeight(800);
