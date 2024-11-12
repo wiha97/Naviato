@@ -48,15 +48,15 @@ public class GameBoard {
     public boolean generateShips(Ship ship) {
         int pos = new Random().nextInt(0, size);
         int attempts = 0;
+        final int MAX = 1000000;
         boolean isSide = new Random().nextBoolean();
 
         //  Loops until valid position for the entire ship, gives up after 1 million tries
-        while (!validate(pos, ship, isSide) && attempts < 1000000) {
+        while (!validate(pos, ship, isSide) && attempts < MAX) {
             pos = new Random().nextInt(0, size);
             attempts++;
-        }
-        if (attempts >= 1000000) {
-            return false;
+            if(attempts >= MAX)
+                return false;
         }
         if (isSide)
             horizontal(pos, ship);

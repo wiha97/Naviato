@@ -70,6 +70,16 @@ public class BattlePlanView {
                         throw new RuntimeException(e);
                     }
                     placed = board.generateShips(ship);
+                    if (!placed) {
+                        pp.setId("error");
+                        try {
+                            Thread.sleep(1000);
+                        } catch (InterruptedException e) {
+                            throw new RuntimeException(e);
+                        }
+                        pp.setId("battleground");
+                        break;
+                    }
                     for (int i = 0; i < board.getSquares().length; i++) {
                         Square sq = board.getSquares()[i];
                         if (sq.getShip() != null) {
@@ -79,15 +89,6 @@ public class BattlePlanView {
                     }
                 }
 
-                if (!placed) {
-                    pp.setId("error");
-                    try {
-                        Thread.sleep(1000);
-                    } catch (InterruptedException e) {
-                        throw new RuntimeException(e);
-                    }
-                    pp.setId("battleground");
-                }
             }
         };
         new Thread(runner).start();
