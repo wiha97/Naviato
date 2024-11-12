@@ -1,5 +1,6 @@
 package network;
 
+import managers.GameManager;
 import models.GameBoard;
 import views.ServerView;
 import java.io.*;
@@ -13,12 +14,11 @@ public class ServerHandler implements Runnable {
     private Socket clientSocket;
     private boolean running;
     private final ServerView serverView;
-    private final GameBoard gameBoard;
+    private final GameBoard gameBoard = GameManager.getGameBoard();
 
     public ServerHandler(int port, ServerView serverView) {
         this.port = port;
         this.serverView = serverView;
-        this.gameBoard = new GameBoard();
         gameBoard.generateField();
     }
 
@@ -52,7 +52,7 @@ public class ServerHandler implements Runnable {
                 BufferedReader reader = new BufferedReader(new InputStreamReader(input))
         ) {
             while (running) {
-                String randomShot = gameBoard.printRandomCoordinate();
+                String randomShot = GameManager.printRandomCoordinate();
                 System.out.println("Server sending shot: " + randomShot);
                 writer.println(randomShot);
 
