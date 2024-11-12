@@ -1,0 +1,80 @@
+#title{
+	-fx-font-family:"URW Bookman";
+	-fx-font-size:32;
+	-fx-text-fill:white;
+	-fx-padding:15px;
+}
+#basePane{
+	-fx-background-color:#383A40;
+/*	-fx-text-fill:white;*/
+}
+#playPane{
+	-fx-background-radius:25px;
+	-fx-border-radius:25px;
+	-fx-background-color:#272727;
+	-fx-border-color:gray;
+}
+#btnBox{
+	-fx-padding:20px;
+}
+#playBtn: hover{
+	-fx-opacity:0.8;
+/*	-fx-skew:40;*/
+}
+#rndBtn: hover{
+	-fx-opacity:0.8;
+}
+#playBtn{
+	-fx-padding:15px;
+	-fx-background-color:darkgreen;
+	-fx-font-size:32px;
+	-fx-background-radius:50px;
+	-fx-text-fill:white;
+}
+#rndBtn{
+	-fx-padding:15px;
+	-fx-background-color:dodgerblue;
+	-fx-font-size:32px;
+	-fx-background-radius:50px;
+	-fx-text-fill:white;
+}
+#boardCell: hover {
+	-fx-border-width:5px;
+	-fx-border-color:white;
+	-fx-text-fill:white;
+	-fx-border-style:solid;
+}
+#boardCell{
+	-fx-border-width:1px;
+	-fx-border-color:#303030;
+	-fx-border-style:dashed;
+	-fx-background-color:dodgerblue;
+	-fx-text-fill:transparent;
+}
+#battleground{
+	-fx-background-color:dodgerblue;
+}
+#error{
+	-fx-background-color:maroon;
+/*	-fx-border-width:2px;*/
+/*	-fx-border-color:maroon;*/
+/*	-fx-border-style:solid;*/
+}
+#shipHit{
+	-fx-backgroound-color:red;
+}
+#carrier{
+	-fx-backgroound-color:gray;
+}
+#cruiser{
+	-fx-backgroound-color:gray;
+}
+#destroyer{
+	-fx-backgroound-color:gray;
+}
+#submarine{
+	-fx-backgroound-color:gray;
+}
+/*#hitCell{
+	-fx-background-color:red;
+}*/

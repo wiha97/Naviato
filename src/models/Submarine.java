@@ -5,6 +5,6 @@ public class Submarine extends Ship{
         name = "Submarine";
         size = 2;
         health = size;
-        color = "purple";
+        color = "navy";
     }
 }
