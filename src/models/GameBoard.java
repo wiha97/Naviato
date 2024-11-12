@@ -103,25 +103,7 @@ public class GameBoard {
         ships.add(new Submarine());
     }
 
-    //Metod för att slumpa fram koordinater
-    public String printRandomCoordinate() {
-        Random random = new Random();
-        int remaining = size;
 
-
-        while (remaining > 0) {
-            int randomIndex = random.nextInt(squares.length);
-
-            if (squares[randomIndex] != null) {
-                Square randomSquare = squares[randomIndex];
-                System.out.println(randomSquare);
-
-                squares[randomIndex] = null;
-                return randomSquare.toString();
-            }
-        }
-        return "No more coordinates";
-    }
 
     public int getSize() {
         return size;

@@ -1,5 +1,6 @@
 package network;
 
+import managers.GameManager;
 import models.GameBoard;
 import models.Square;
 
@@ -9,7 +10,7 @@ import java.net.Socket;
 public class ClientHandler implements Runnable{
 
 
-    private GameBoard gameBoard;
+    private GameBoard gameBoard = GameManager.getGameBoard();
     private Square square;
     private String ip;
     private int port;
@@ -17,8 +18,6 @@ public class ClientHandler implements Runnable{
     public ClientHandler(String ip, int port) {
         this.ip = ip;
         this.port = port;
-        this.gameBoard = new GameBoard();
-        gameBoard.generateField();
 
     }
 
@@ -38,7 +37,7 @@ public class ClientHandler implements Runnable{
                 BufferedReader reader = new BufferedReader(new InputStreamReader(input));
                 //Denna loop ska startas efter att skeppen placerats ut och man valt delay
                 while (true) {
-                    String randomShot = gameBoard.printRandomCoordinate();
+                    String randomShot = GameManager.printRandomCoordinate();
                     writer.println(randomShot);
                     //"millis" ska vara värdet från slider
                     Thread.sleep(5000);
@@ -52,7 +51,6 @@ public class ClientHandler implements Runnable{
                     }
 
                 }
-
 
 
             } catch (IOException e) {

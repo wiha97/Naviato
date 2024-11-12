@@ -9,7 +9,6 @@ import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import views.PlanView;
-import views.PlannerView;
 
 public class Naviato extends Application {
     public static void main(String[] args) {
