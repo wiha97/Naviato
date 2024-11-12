@@ -8,6 +8,8 @@ import javafx.stage.Stage;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
+import views.PlanView;
+import views.PlannerView;
 
 public class Naviato extends Application {
     public static void main(String[] args) {
@@ -24,7 +26,10 @@ public class Naviato extends Application {
         label.setPrefHeight(200);
         label.setAlignment(Pos.CENTER);
         stage.setScene(new Scene(label));
+//        stage.setScene(new PlanView().planScene(stage));
         stage.setTitle("Naviato");
+        new PlanView().show(stage);
+//        stage.setScene(new PlannerView().planScene());
         stage.show();
     }
 

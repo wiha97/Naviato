@@ -5,9 +5,10 @@ public class Square {
     private Ship ship;
     private boolean hit;
     private String color;
+    private String coordinate;
 
-    public Square(){
-
+    public Square(String xy){
+        coordinate = xy;
     }
 
     public Square(Ship ship){
@@ -24,9 +25,17 @@ public class Square {
     }
 
     public void setHit(boolean hit) {
+        if(ship != null) {
+            ship.damage();
+            color = "red";
+        }
     }
 
     public String getColor() {
         return color;
+    }
+
+    public String getCoordinate() {
+        return coordinate;
     }
 }

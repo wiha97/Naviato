@@ -8,7 +8,7 @@ public class GameBoard {
     private int size = 100;
     private Square[] squares;
     private List<Ship> ships = new ArrayList<>();
-    private final String chars = "ABCDEFGHIJK";
+    private final String chars = "ABCDEFGHIJ";
     private final char[] chArr = chars.toCharArray();
 
     public GameBoard() {
@@ -17,8 +17,16 @@ public class GameBoard {
 
     public void generateField() {
         squares = new Square[size];
+        int x = 0;
+        int y = 0;
         for (int i = 0; i < size; i++) {
-            squares[i] = new Square();
+            if (i % 10 == 0) {
+                if (x != 0)
+                    y++;
+                x = 0;
+            }
+            squares[i] = new Square(""+chArr[x] + y);
+            x++;
         }
         for (Ship ship : ships) {
             int pos = new Random().nextInt(-1, size);
