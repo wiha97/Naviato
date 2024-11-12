@@ -25,66 +25,148 @@ public class GameBoard {
                     y++;
                 x = 0;
             }
-            squares[i] = new Square(""+chArr[x] + y);
+            squares[i] = new Square("" + chArr[x] + y);
             x++;
         }
-        for (Ship ship : ships) {
-            int pos = new Random().nextInt(-1, size);
-            int attempts = 0;
-            while (!validate(pos, ship) && attempts < 1000000) {
-                pos = new Random().nextInt(-1, size);
-                if (pos == 0)
-                    System.out.println(pos);
-                attempts++;
-            }
-            if (attempts > 1000000) {
-                System.out.println("Attempts full");
-                break;
-            }
-            horizontal(pos, ship);
-            System.out.println("" + ship.getName() + " deployed");
+    }
+
+    public void placeShip(int pos, boolean isVert) {
+        if (!ships.isEmpty()) {
+            Ship ship = ships.get(0);
+            if (validate(pos, ship, isVert)) {
+                if (isVert)
+                    horizontal(pos, ship);
+                else
+                    vertical(pos, ship);
+                ships.remove(0);
+            } else
+                System.out.println("NOPE");
+        } else
+            System.out.println("No more ships");
+    }
+
+    public boolean generateShips(Ship ship) {
+        int pos = new Random().nextInt(0, size);
+        int attempts = 0;
+        final int MAX = 1000000;
+        boolean isSide = new Random().nextBoolean();
+
+        //  Loops until valid position for the entire ship, gives up after 1 million tries
+        while (!validate(pos, ship, isSide) && attempts < MAX) {
+            pos = new Random().nextInt(0, size);
+            attempts++;
+            if(attempts >= MAX)
+                return false;
         }
+        if (isSide)
+            horizontal(pos, ship);
+        else
+            vertical(pos, ship);
+        return true;
     }
 
     private void vertical(int pos, Ship ship) {
-
+        int y = pos;
+        for (int i = 0; i < ship.getSize(); i++) {
+            squares[y].setShip(ship);
+            y += 10;
+        }
     }
+
     private void horizontal(int pos, Ship ship) {
         for (int i = pos; i < pos + ship.getSize(); i++) {
-            squares[i] = new Square(ship);
+            squares[i].setShip(ship);
         }
     }
 
-    //  TODO: Vertical: +10+10+10+10
-    //
-    private boolean validate(int pos, Ship ship) {
-        if (pos + ship.getSize() > size - 1 || pos < 0)
+    private boolean validate(int pos, Ship ship, boolean isSide) {
+        if (pos + ship.getSize() > squares.length)
             return false;
 
+        if (isSide) {
+            return validateSidePos(pos, ship);
+        } else {
+            return validateVertical(pos, ship);
+        }
+//        return true;
+    }
+
+    private boolean validateSidePos(int pos, Ship ship) {
+        if (pos - 1 >= 0) {
+            if (containsShip(pos - 1))
+                return false;
+            if (topBotContainsShip(pos - 1))
+                return false;
+        }
         for (int i = pos; i < pos + ship.getSize(); i++) {
-            if ((i + 1) % 10 == 0 && i != 0 && i != pos+ship.getSize()-1)
+            if (pos != i && i % 10 == 0 && i >= 0 && i != pos + ship.getSize())
                 return false;
-            if (squares[i].getShip() != null)
+            if (containsShip(i))
                 return false;
-            if (squares[i + 1].getShip() != null)
+            if (topBotContainsShip(i))
                 return false;
-            if (i != 0)
-                if (squares[i - 1].getShip() != null)
-                    return false;
-            if (i > 9)
-                if (!shipCheck(i - 10))
-                    return false;
-            if (i < size - 10)
-                if (!shipCheck(i + 10))
-                    return false;
+        }
+        int total = pos + ship.getSize();
+        if (total < squares.length) {
+            if (containsShip(total) && (total) % 10 != 0)
+                return false;
+            if (topBotContainsShip(total) && (total) % 10 != 0)
+                return false;
         }
         return true;
     }
 
-    private boolean shipCheck(int i) {
-        if (squares[i].getShip() != null)
+    private boolean validateVertical(int pos, Ship ship) {
+        int x = pos;
+        if (pos - 10 >= 0) {
+            if (containsShip(pos - 10))
+                return false;
+            if (sideContainsShip(pos - 10))
+                return false;
+        }
+        for (int i = 0; i < ship.getSize(); i++) {
+            if (x > squares.length - 1) {
+                return false;
+            }
+            if (containsShip(x))
+                return false;
+            if (sideContainsShip(x))
+                return false;
+            x += 10;
+        }
+        if (x < squares.length)
+            if (containsShip(x))
+                return false;
+        if (sideContainsShip(x))
             return false;
+
         return true;
+    }
+
+    private boolean sideContainsShip(int i) {
+        if (i < squares.length) {
+            if (i + 1 < squares.length)
+                if (containsShip(i + 1) && (i + 1) % 10 != 0)
+                    return true;
+            if (i - 1 >= 0)
+                if (containsShip(i - 1) && i % 10 != 0)
+                    return true;
+        }
+        return false;
+    }
+
+    private boolean topBotContainsShip(int i) {
+        if (i + 10 < squares.length - 1)
+            if (containsShip(i + 10))
+                return true;
+        if (i - 10 > 0)
+            if (containsShip(i - 10))
+                return true;
+        return false;
+    }
+
+    private boolean containsShip(int i) {
+        return squares[i].getShip() != null;
     }
 
     private void fillShips() {
@@ -101,12 +183,6 @@ public class GameBoard {
         ships.add(new Submarine());
         ships.add(new Submarine());
         ships.add(new Submarine());
-    }
-
-
-
-    public int getSize() {
-        return size;
     }
 
     public List<Ship> getShips() {

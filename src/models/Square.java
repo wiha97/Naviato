@@ -11,11 +11,6 @@ public class Square {
         coordinate = xy;
     }
 
-    public Square(Ship ship){
-        this.ship = ship;
-        color = ship.getColor();
-    }
-
     public Ship getShip() {
         return ship;
     }
@@ -31,11 +26,25 @@ public class Square {
         }
     }
 
+    public String hitSquare(){
+        if(ship != null) {
+            ship.damage();
+            color = "red";
+            return "Hit ["+coordinate+"]";
+        }
+        return "Miss ["+coordinate+"]";
+    }
+
     public String getColor() {
         return color;
     }
 
     public String getCoordinate() {
         return coordinate;
+    }
+
+    public void setShip(Ship ship) {
+        this.ship = ship;
+        color = ship.getColor();
     }
 }
