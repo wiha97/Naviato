@@ -8,8 +8,8 @@ import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
 
-public class ButtonExample extends Application {
-    public static void buttonExample(String[] args) {
+public class Welcome extends Application {
+    public static void welcome(String[] args) {
         launch();
 
     }
