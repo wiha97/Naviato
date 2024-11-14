@@ -8,9 +8,9 @@ public abstract class Ship {
 
     public void damage(){
         health--;
-        if(health <= 0){
-
         }
+    public boolean isSunk(){
+        return health == 0;
     }
 
     public String getName() {
