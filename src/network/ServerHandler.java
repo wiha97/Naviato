@@ -17,7 +17,7 @@ public class ServerHandler implements Runnable {
     private boolean running;
     private final ServerView serverView;
     private final GameBoard gameBoard = GameManager.getGameBoard();
-    private boolean isFirstShot = false;
+    private boolean gameInitialized = false;
 
     public ServerHandler(int port, ServerView serverView) {
         this.port = port;
@@ -35,7 +35,7 @@ public class ServerHandler implements Runnable {
 
             while (running) {
                 clientSocket = serverSocket.accept();
-                System.out.println("Server: Client connected: " + clientSocket.getInetAddress());
+                System.out.println("Client connected: " + clientSocket.getInetAddress());
                 serverView.updateConnectionStatus("Client connected!");
 
                 handleClientCommunication(clientSocket);
@@ -55,13 +55,12 @@ public class ServerHandler implements Runnable {
                 BufferedReader reader = new BufferedReader(new InputStreamReader(input))
         ) {
             while (running) {
-                String incomingShot = reader.readLine();
-                if (incomingShot != null) {
-                    System.out.println("Client: " + incomingShot);
-                    String response = handleShot(incomingShot);
+                String incomingMessage = reader.readLine();
+                if (incomingMessage != null) {
+                    System.out.println("Received: " + incomingMessage);
+                    String response = handleShotMessage(incomingMessage);
                     writer.println(response);
                 } else {
-                    System.out.println("No feed from client.");
                     break;
                 }
             }
@@ -70,15 +69,52 @@ public class ServerHandler implements Runnable {
         }
     }
 
+    private String handleShotMessage(String message) {
+        if (!gameInitialized && message.startsWith("i shot")) {
+            gameInitialized = true;
+            String coordinates = message.substring(7);
+            System.out.println("Game initialized by client at: " + coordinates);
+            return handleGameShot(coordinates);
+        }
+
+        if (gameInitialized) {
+            String coordinates = message.substring(7);
+            return handleGameShot(coordinates);
+        }
+
+        return "Invalid message";
+    }
+
+    private String handleGameShot(String coordinates) {
+        boolean isHit = isHit(coordinates);
+        String code;
+
+        if (isHit) {
+            boolean isSunk = checkIfShipSunk(coordinates);
+            code = isSunk ? "s" : "h";
+        } else {
+            code = "m";
+        }
+
+        return code + " shot " + GameManager.printRandomCoordinate();
+    }
+
+/*    private boolean isHit(String coordinates) {
+       //logik för att kontrollera hit
+            return true;
+        }
+        return false;
+    }
+
+    private boolean checkIfShipSunk(String coordinates) {
+        //logik för att kontrollera om skepp sjunkit
+    }*/
+
     public void stopServer() {
         running = false;
         try {
-            if (clientSocket != null && !clientSocket.isClosed()) {
-                clientSocket.close();
-            }
-            if (serverSocket != null && !serverSocket.isClosed()) {
-                serverSocket.close();
-            }
+            if (clientSocket != null && !clientSocket.isClosed()) clientSocket.close();
+            if (serverSocket != null && !serverSocket.isClosed()) serverSocket.close();
             System.out.println("Server stopped.");
         } catch (IOException e) {
             System.out.println("Error stopping the server: " + e.getMessage());
@@ -86,55 +122,6 @@ public class ServerHandler implements Runnable {
     }
 
     public void startServer() {
-        Thread serverThread = new Thread(this);
-        serverThread.start();
-    }
-
-    public String handleShot(String shotMessage) {
-        if (shotMessage.startsWith("i")) {
-            System.out.println("Game initialization shot received: " + shotMessage);
-            String coordinates = shotMessage.substring(6);
-            return handleGameShot(coordinates);
-        }
-
-        String coordinates = shotMessage.substring(6);
-        return handleGameShot(coordinates);
-    }
-
-    public String handleGameShot(String coordinates) {
-        boolean isHit = isHit(coordinates);
-        String result = "";
-
-        if (isHit) {
-            boolean isSunk = checkIfShipSunk(coordinates);
-            if (isSunk) {
-                result = "s shot " + GameManager.printRandomCoordinate();
-            } else {
-                result = "h shot " + GameManager.printRandomCoordinate();
-            }
-        } else {
-            result = "m shot " + GameManager.printRandomCoordinate();
-        }
-
-        return result;
-    }
-
-    private boolean isHit(String coordinates) {
-        Square targetSquare = gameBoard.getSquare(coordinates);
-        if (targetSquare != null && targetSquare.getShip() != null) {
-            targetSquare.setHit(true);
-            return true;
-        }
-        return false;
-    }
-
-    private boolean checkIfShipSunk(String coordinates) {
-        Square targetSquare = gameBoard.getSquare(coordinates);
-        Ship ship = targetSquare.getShip();
-
-        if (ship != null) {
-            return ship.isSunk();
-        }
-        return false;
+        new Thread(this).start();
     }
 }
