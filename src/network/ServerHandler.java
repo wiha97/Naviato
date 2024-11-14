@@ -99,17 +99,16 @@ public class ServerHandler implements Runnable {
         return code + " shot " + GameManager.printRandomCoordinate();
     }
 
-/*    private boolean isHit(String coordinates) {
-       //logik för att kontrollera hit
-            return true;
-        }
+    private boolean isHit(String coordinates) {
         return false;
+       //logik för att kontrollera hit
     }
 
     private boolean checkIfShipSunk(String coordinates) {
+        return false;
         //logik för att kontrollera om skepp sjunkit
-    }*/
-
+    }
+    
     public void stopServer() {
         running = false;
         try {
