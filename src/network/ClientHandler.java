@@ -35,20 +35,23 @@ public class ClientHandler implements Runnable{
 
                 InputStream input = socket.getInputStream();
                 BufferedReader reader = new BufferedReader(new InputStreamReader(input));
-                //Denna loop ska startas efter att skeppen placerats ut och man valt delay
+
+                GameManager.firstShot();
                 while (true) {
-                    String randomShot = GameManager.printRandomCoordinate();
-                    writer.println(randomShot);
                     //"millis" ska vara värdet från slider
                     Thread.sleep(5000);
 
-                    String incoming = reader.readLine();
-                    if (incoming != null) {
-                        System.out.println("Host: " + incoming);
+                    String incomingShot = reader.readLine();
+                    if (incomingShot != null) {
+                        String reply = GameManager.gameMessage(incomingShot);
+                        writer.println(reply);
                     } else {
                         System.out.println("no feed");
                         break;
+
                     }
+
+
 
                 }
 

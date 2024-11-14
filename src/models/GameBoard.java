@@ -192,4 +192,11 @@ public class GameBoard {
     public Square[] getSquares() {
         return squares;
     }
-}
+
+    }
+
+
+
+
+
+
