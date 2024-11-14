@@ -2,6 +2,8 @@ package network;
 
 import managers.GameManager;
 import models.GameBoard;
+import models.Ship;
+import models.Square;
 import views.ServerView;
 import java.io.*;
 import java.net.ServerSocket;
@@ -15,6 +17,7 @@ public class ServerHandler implements Runnable {
     private boolean running;
     private final ServerView serverView;
     private final GameBoard gameBoard = GameManager.getGameBoard();
+    private boolean isFirstShot = false;
 
     public ServerHandler(int port, ServerView serverView) {
         this.port = port;
@@ -52,10 +55,6 @@ public class ServerHandler implements Runnable {
                 BufferedReader reader = new BufferedReader(new InputStreamReader(input))
         ) {
             while (running) {
-                String randomShot = GameManager.printRandomCoordinate();
-                System.out.println("Server sending shot: " + randomShot);
-                writer.println(randomShot);
-
                 String incomingShot = reader.readLine();
                 if (incomingShot != null) {
                     System.out.println("Client: " + incomingShot);
@@ -91,25 +90,51 @@ public class ServerHandler implements Runnable {
         serverThread.start();
     }
 
-    public String handleShot(String coordinates) {
+    public String handleShot(String shotMessage) {
+        if (shotMessage.startsWith("i")) {
+            System.out.println("Game initialization shot received: " + shotMessage);
+            String coordinates = shotMessage.substring(6);
+            return handleGameShot(coordinates);
+        }
+
+        String coordinates = shotMessage.substring(6);
+        return handleGameShot(coordinates);
+    }
+
+    public String handleGameShot(String coordinates) {
         boolean isHit = isHit(coordinates);
+        String result = "";
+
         if (isHit) {
             boolean isSunk = checkIfShipSunk(coordinates);
             if (isSunk) {
-                return "s " + coordinates;
+                result = "s shot " + GameManager.printRandomCoordinate();
             } else {
-                return "h " + coordinates;
+                result = "h shot " + GameManager.printRandomCoordinate();
             }
         } else {
-            return "m " + coordinates;
+            result = "m shot " + GameManager.printRandomCoordinate();
         }
+
+        return result;
     }
 
     private boolean isHit(String coordinates) {
+        Square targetSquare = gameBoard.getSquare(coordinates);
+        if (targetSquare != null && targetSquare.getShip() != null) {
+            targetSquare.setHit(true);
+            return true;
+        }
         return false;
     }
 
     private boolean checkIfShipSunk(String coordinates) {
+        Square targetSquare = gameBoard.getSquare(coordinates);
+        Ship ship = targetSquare.getShip();
+
+        if (ship != null) {
+            return ship.isSunk();
+        }
         return false;
     }
 }
