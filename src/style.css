@@ -21,24 +21,24 @@
 #btnBox{
 	-fx-padding:20px;
 }
+.btn: hover{
+	-fx-opacity:0.8;
+}
 .btn {
 	-fx-padding:15px;
-	-fx-font-size:32px;
-	-fx-background-radius:50px;
+	-fx-font-size:25px;
+	-fx-background-radius:25px;
 	-fx-text-fill:white;
-}
-#playBtn: hover{
-	-fx-opacity:0.8;
-/*	-fx-skew:40;*/
-}
-#rndBtn: hover{
-	-fx-opacity:0.8;
+	-fx-background-color:#555555;
 }
 #playBtn{
 	-fx-background-color:darkgreen;
 }
 #rndBtn{
 	-fx-background-color:dodgerblue;
+}
+#extBtn{
+	-fx-background-color:maroon;
 }
 .boardCell: hover {
 	-fx-border-width:5px;
@@ -89,6 +89,11 @@
 }
 #error{
 	-fx-background-color:maroon;
+}
+#shipYard{
+	-fx-background-color:#272727;
+/*	-fx-background-radius:0 0 15 15;*/
+	-fx-background-radius:25;
 }
 #shipHit{
 	-fx-background-color:maroon;

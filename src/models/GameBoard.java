@@ -13,7 +13,7 @@ public class GameBoard {
     private Square[] squares;
     private List<Ship> ships = new ArrayList<>();
     private ObservableList<Ship> deployable = FXCollections.observableList(ships);
-    private final String chars = "ABCDEFGHIJ";
+    private final String chars = "abcdefghij";
     private final char[] chArr = chars.toCharArray();
 
     public GameBoard() {
@@ -35,7 +35,9 @@ public class GameBoard {
             squares[i] = new Square("" + x + chArr[y]);
             x++;
         }
-        deployable = FXCollections.observableList(ships);
+        //  Line removed = error on random placement but works
+        //  Line exists  = No errors and works with random placement, but doesn't work with manual
+//        deployable = FXCollections.observableList(ships);
     }
 
     public boolean placeShip(int pos, boolean isVert) {
@@ -53,16 +55,17 @@ public class GameBoard {
         return false;
     }
 
-    public void removeShip(int i){
+    public void removeShip(int i) {
         Ship ship = squares[i].getShip();
-        for(Square square : Arrays.stream(squares).filter(s -> s.getShip() == ship).toList()){
+        for (Square square : Arrays.stream(squares).filter(s -> s.getShip() == ship).toList()) {
             square.setShip(null);
         }
         deployable.addFirst(ship);
     }
-    public void removeShip(Ship ship){
+
+    public void removeShip(Ship ship) {
 //        Ship ship = squares[i].getShip();
-        for(Square square : Arrays.stream(squares).filter(s -> s.getShip() == ship).toList()){
+        for (Square square : Arrays.stream(squares).filter(s -> s.getShip() == ship).toList()) {
             square.setShip(null);
         }
         deployable.addFirst(ship);
@@ -78,7 +81,7 @@ public class GameBoard {
         while (!validate(pos, ship, isSide) && attempts < MAX) {
             pos = new Random().nextInt(0, size);
             attempts++;
-            if(attempts >= MAX)
+            if (attempts >= MAX)
                 return false;
         }
 //        return placeShip(pos, isSide);
@@ -209,10 +212,6 @@ public class GameBoard {
         deployable.add(new Submarine());
     }
 
-    public List<Ship> getShips() {
-        return ships;
-    }
-
     public ObservableList<Ship> getDeployable() {
         return deployable;
     }
@@ -221,7 +220,7 @@ public class GameBoard {
         return squares;
     }
 
-    }
+}
 
 
 

@@ -15,6 +15,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 import managers.GameManager;
+import managers.ViewManager;
 import models.GameBoard;
 import models.Ship;
 import models.ShipCell;
@@ -34,8 +35,8 @@ public class BattlePlanView {
         Scene scene = new Scene(basePane());
         scene.getStylesheets().add("style.css");
         stage.setScene(scene);
-        stage.setWidth(700);
-        stage.setHeight(800);
+        stage.setWidth(800);
+//        stage.setHeight(800);
     }
 
     private void drawBoard() {
@@ -186,51 +187,17 @@ public class BattlePlanView {
 
         VBox listBox = new VBox();
 
-        Label shipYard = new Label();
-        shipYard.setText("Shipyard:");
-//        shipYard.setAlignment(Pos.CENTER_LEFT);
-        shipYard.setId("txt");
+        listBox.getChildren().addAll(SharedViews.shipYard(shipStock));
+        listBox.setMinHeight(20);
+        listBox.setAlignment(Pos.CENTER);
+        listBox.setMaxWidth(400);
+        listBox.setId("shipYard");
+        listBox.setStyle("-fx-background-color:#272727;");
 
-        HBox shipBox = new HBox();
-        shipBox.setAlignment(Pos.CENTER);
-        for (Ship ship : shipStock) {
-            HBox hull = new HBox();
-            for (int i = 0; i < ship.getSize(); i++) {
-                        StackPane stack = new StackPane();
-                        Rectangle rect = new Rectangle(10, 10);
-                        rect.setFill(Color.TRANSPARENT);
-                        stack.getChildren().add(rect);
-                        stack.getStyleClass().add("ship");
-                        stack.setId(ship.getName().toLowerCase());
-                        hull.getChildren().add(stack);
-            }
-            shipBox.getChildren().add(hull);
-        }
-        shipBox.setSpacing(15);
-        shipStock.addListener(new ListChangeListener<Ship>() {
-            @Override
-            public void onChanged(Change<? extends Ship> change) {
-                shipBox.getChildren().clear();
-                for (Ship ship : change.getList()) {
-                    HBox hull = new HBox();
-                    for (int i = 0; i < ship.getSize(); i++) {
-                        StackPane pane = new StackPane();
-                        Rectangle rect = new Rectangle(10, 10);
-                        rect.setFill(Color.TRANSPARENT);
-                        pane.getChildren().add(rect);
-                        pane.getStyleClass().add("ship");
-                        pane.setId(ship.getName().toLowerCase());
-                        hull.getChildren().add(pane);
-                    }
-                    shipBox.getChildren().add(hull);
-                }
-            }
-        });
-        listBox.getChildren().addAll(shipBox);
-
-        title.getStyleClass().add("btn");
         title.setText("BATTLEPLAN");
         title.setId("title");
+
+        FlowPane flowPane = new FlowPane();
 
         rndBtn.getStyleClass().add("btn");
         rndBtn.setId("rndBtn");
@@ -238,7 +205,7 @@ public class BattlePlanView {
 
         clrBtn.getStyleClass().add("btn");
         clrBtn.setId("clrBtn");
-        clrBtn.setText("CLEAR");
+        clrBtn.setText("CLEAR BOARD");
 
         extBtn.getStyleClass().add("btn");
         extBtn.setId("extBtn");
@@ -248,17 +215,25 @@ public class BattlePlanView {
         playBtn.setId("playBtn");
         playBtn.setText("READY UP");
 
+        flowPane.setAlignment(Pos.CENTER);
+        flowPane.setVgap(15);
+        flowPane.setHgap(15);
+//        flowPane.setPrefWrapLength(500);
+        flowPane.setPrefWidth(400);
+        flowPane.getChildren().addAll(rndBtn, clrBtn, extBtn, playBtn);
+
         rndBtn.setOnMouseClicked((e) -> {
             placeShips();
         });
         clrBtn.setOnMouseClicked((e) -> clearBoard());
+        playBtn.setOnMouseClicked((e) -> ViewManager.battleView());
 
 
         hBox.getChildren().add(SharedViews.playPane(playPane));
 //        hBox.getChildren().add(playPane());
         hBox.setAlignment(Pos.CENTER);
 
-        btnBox.getChildren().addAll(rndBtn, playBtn);
+        btnBox.getChildren().addAll(flowPane);
         btnBox.setAlignment(Pos.CENTER);
         btnBox.setSpacing(15);
         btnBox.setId("btnBox");
