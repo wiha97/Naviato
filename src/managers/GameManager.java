@@ -3,23 +3,35 @@ package managers;
 import models.GameBoard;
 import models.Square;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 public class GameManager {
 
-    static GameBoard gameBoard = new GameBoard();
+    private GameBoard gameBoard;
+    private  List<Square>availableSquares;
+    private  Random random;
 
-public static String gameMessage(String incomingShot) {
+    public GameManager() {
+        this.gameBoard = new GameBoard();
+        this.gameBoard.generateField();
+        this.availableSquares = new ArrayList<>(List.of(gameBoard.getSquares()));
+        this.random = new Random();
+    }
 
+
+    public String gameMessage(String incomingShot) {
     String[] inputToArray = incomingShot.split(" ");
     String shotCoordinate = inputToArray[2];
-    Square checkShip = checkSquare(shotCoordinate);
+    System.out.println(shotCoordinate);
+    Square checkShip = checkSquare(shotCoordinate);;
     String reply;
-    String si = "i shot " + printRandomCoordinate(); //init
-    String s1 = "h shot " + printRandomCoordinate(); //hit+koordinat
-    String s2 = "m shot " + printRandomCoordinate(); //miss
+    String si = "i shot " + randomCoordinate(); //init
+    String s1 = "h shot " + randomCoordinate(); //hit+koordinat
+    String s2 = "m shot " + randomCoordinate(); //miss
     String s3 = "game over"; //Looooser!
-    String s4 = "s shot " + printRandomCoordinate(); //Sänkt + koordinat
+    String s4 = "s shot " + randomCoordinate(); //Sänkt + koordinat
 
     if (checkShip.getShip() != null) {
         checkShip.setHit(true);
@@ -39,32 +51,21 @@ public static String gameMessage(String incomingShot) {
     return reply;
 }
 
-    public static String printRandomCoordinate() {
-        Random random = new Random();
-        int remaining = gameBoard.getSquares().length;
-        Square[] squares = gameBoard.getSquares();
-
-        // Första skottet...?
-        while (remaining > 0) {
-            int randomIndex = random.nextInt(squares.length);
-            Square randomSquare = squares[randomIndex];
-
-            if (squares[randomIndex] != null) {
-                squares[randomIndex] = null;
-                remaining--;
-                return randomSquare.getCoordinate();
-
-            }
-
+    public String randomCoordinate() {
+        if(availableSquares.isEmpty()){
+            return "No more coordinates";
         }
 
-        return "No more coordinates available";
+        int randomIndex = random.nextInt(availableSquares.size());
+        Square randomSquare = availableSquares.get(randomIndex);
+        availableSquares.remove(randomIndex);
+        return randomSquare.getCoordinate().toString();
     }
 
-    public static GameBoard getGameBoard() {
+    public GameBoard getGameBoard() {
         return gameBoard;
     }
-    private static Square checkSquare (String shotCoordinate) {
+    private Square checkSquare (String shotCoordinate) {
         for (Square square : gameBoard.getSquares()) {
             if (square.getCoordinate().equals(shotCoordinate)) {
                 return square;
@@ -73,7 +74,7 @@ public static String gameMessage(String incomingShot) {
         return null;
     }
 
-    private static boolean gameOver(){
+    private boolean gameOver(){
         for (Square square : gameBoard.getSquares()){
             if (square.getShip() != null && !square.getShip().isSunk()) {
                 return false;
@@ -81,7 +82,11 @@ public static String gameMessage(String incomingShot) {
         }
         return true;
     }
-    public static void firstShot(){
-        System.out.println();
-}
+    public String firstShot() {
+        return "i shot " + randomCoordinate();
+    }
+
+
+
+
 }

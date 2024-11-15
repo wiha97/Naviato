@@ -9,8 +9,7 @@ import java.net.Socket;
 
 public class ClientHandler implements Runnable{
 
-
-    private GameBoard gameBoard = GameManager.getGameBoard();
+    private GameManager gameManager;
     private Square square;
     private String ip;
     private int port;
@@ -27,7 +26,7 @@ public class ClientHandler implements Runnable{
     public void run() {
         {
 
-            gameBoard.generateField();
+
             try {
                 socket = new Socket(ip, port);
                 OutputStream output = socket.getOutputStream();
@@ -36,14 +35,14 @@ public class ClientHandler implements Runnable{
                 InputStream input = socket.getInputStream();
                 BufferedReader reader = new BufferedReader(new InputStreamReader(input));
 
-                GameManager.firstShot();
+                writer.println(gameManager.firstShot());
                 while (true) {
                     //"millis" ska vara värdet från slider
                     Thread.sleep(5000);
 
                     String incomingShot = reader.readLine();
                     if (incomingShot != null) {
-                        String reply = GameManager.gameMessage(incomingShot);
+                        String reply = gameManager.gameMessage(incomingShot);
                         writer.println(reply);
                     } else {
                         System.out.println("no feed");
