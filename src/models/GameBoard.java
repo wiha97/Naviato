@@ -15,6 +15,7 @@ public class GameBoard {
     private ObservableList<Ship> deployable = FXCollections.observableList(ships);
     private final String chars = "abcdefghij";
     private final char[] chArr = chars.toCharArray();
+    private ObservableList<String> logList = FXCollections.observableList(new ArrayList<>());
 
     public GameBoard() {
         fillShips();
@@ -220,6 +221,9 @@ public class GameBoard {
         return squares;
     }
 
+    public ObservableList<String> getLogList() {
+        return logList;
+    }
 }
 
 

@@ -5,19 +5,23 @@ import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
+import javafx.scene.Node;
 import javafx.scene.control.Label;
+import javafx.scene.input.MouseButton;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import managers.GameManager;
+import models.GameBoard;
 import models.Ship;
 import models.Square;
 
 public class SharedViews {
-    private static final int SQUARE_SIZE = 50;
+    private static int SQUARE_SIZE = 50;
     static String abc = "ABCDEFGHIJ";
     static char[] chArr = abc.toCharArray();
+    private static AnchorPane pane;
 
 
     public static VBox playPane(AnchorPane pane) {
@@ -36,7 +40,8 @@ public class SharedViews {
         return content;
     }
 
-    public static AnchorPane boardPane() {
+    public static AnchorPane boardPane(int size) {
+        SQUARE_SIZE = size;
         AnchorPane pane = new AnchorPane();
         pane.setId("battleground");
         int x = 0;
@@ -167,5 +172,71 @@ public class SharedViews {
         shipBox.getChildren().add(flowPane);
         shipBox.setMouseTransparent(true);
         return shipBox;
+    }
+
+    static boolean vertPlace = false;
+    public static void drawBoard(AnchorPane nPane, GameBoard board) {
+        pane = nPane;
+        int i = 0;
+        for (Node n : pane.getChildren()) {
+            n.getStyleClass().clear();
+            n.getStyleClass().add("boardCell");
+            if(!board.getDeployable().isEmpty()){
+                n.setId("bcHori");
+                if (vertPlace)
+                    n.setId("bcVert");
+            }
+            else
+                n.setId(null);
+            int idx = i;
+            n.setOnScroll((e) -> {
+                scroll();
+                drawBoard(pane, board);
+            });
+//            n.setOnMouseClicked(event -> {
+//                if (event.getButton() == MouseButton.PRIMARY)
+//                    placeShip(idx, !vertPlace);
+////                if (event.getButton() == MouseButton.SECONDARY) {
+////                    board.removeShip(idx);
+////                    drawBoard();
+////                }
+//            });
+            i++;
+        }
+        drawShips(board);
+    }
+
+    //  Fix for double-trigger from setOnScroll
+    static int sc = 0;
+
+    private static void scroll() {
+        sc++;
+        if (sc % 2 == 0)
+            vertPlace = !vertPlace;
+//        drawBoard(pane, board);
+    }
+
+    private static void drawShips(GameBoard board) {
+        for (int i = 0; i < board.getSquares().length; i++) {
+            Square sq = board.getSquares()[i];
+            if (sq.getShip() != null) {
+                Node node = pane.getChildren().get(i);
+                node.setId(sq.getShip().getName().toLowerCase());
+                node.getStyleClass().add("ship");
+                int idx = i;
+                node.setOnMouseClicked(event -> {
+//                    if (event.getButton() == MouseButton.PRIMARY)
+//                        placeShip(idx, !vertPlace);
+//                    if (event.getButton() == MouseButton.SECONDARY) {
+//                        board.removeShip(idx);
+//                        drawBoard();
+//                    }
+                });
+            }
+        }
+    }
+
+    public static char[] getChArr() {
+        return chArr;
     }
 }

@@ -1,10 +1,7 @@
 package managers;
 
 import javafx.stage.Stage;
-import views.BattlePlanView;
-import views.ClientView;
-import views.ServerView;
-import views.WelcomeView;
+import views.*;
 
 public class ViewManager {
     private static Stage baseStage;
@@ -27,7 +24,7 @@ public class ViewManager {
     }
 
     public static void battleView(){
-
+        new BattleView().start(baseStage);
     }
 
 }
