@@ -28,12 +28,14 @@ public class ViewManager {
         title.setAlignment(Pos.CENTER);
 
 
+        server.getStyleClass().add("btn");
         server.setId("rndBtn");
         server.setText("Host");
         server.setOnMouseClicked((e) -> {
             baseStage.setScene(new ServerView().serverScene());
         });
 
+        client.getStyleClass().add("btn");
         client.setId("playBtn");
         client.setText("Join");
         client.setOnMouseClicked((e) ->{
@@ -50,8 +52,8 @@ public class ViewManager {
         vBox.getChildren().addAll(title, hBox);
 
         Scene scene = new Scene(vBox);
-        stage.setWidth(700);
-        stage.setHeight(800);
+//        stage.setWidth(700);
+//        stage.setHeight(800);
         scene.getStylesheets().add("style.css");
         stage.setScene(scene);
 

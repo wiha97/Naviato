@@ -1,47 +1,127 @@
 package views;
 
+import javafx.application.Platform;
+import javafx.collections.ListChangeListener;
+import javafx.collections.ObservableList;
+import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
-import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
+import javafx.scene.control.ListView;
+import javafx.scene.input.MouseButton;
+import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
+import managers.GameManager;
 import models.GameBoard;
 import models.Ship;
+import models.ShipCell;
 import models.Square;
 
+import java.util.ArrayList;
+
 public class BattlePlanView {
-    private GameBoard board = new GameBoard();
-    private int squareSize = 50;
-    private int gap = 2;
-    private boolean isVert = true;
-    private String css = "-fx-border-color: gray; -fx-border-width: 2px;";
-    //    private String css = "-fx-border-color: gray; -fx-border-width: 2px; -fx-border-radius:5px; -fx-background-radius:5px;";
-    String abc = "ABCDEFGHIJ";
-    char[] chArr = abc.toCharArray();
-    Stage pStage;
-    AnchorPane pp;
+    private GameBoard board = GameManager.getGameBoard();
+    private ObservableList<Ship> shipStock = board.getDeployable();
+    AnchorPane playPane = SharedViews.boardPane();
+    boolean vertPlace = true;
 
 
     public void start(Stage stage) {
-        pStage = stage;
         board.generateField();
-        play();
-    }
-
-    void play() {
-        pp = boardPane();
-//        AnchorPane pane = playPane();
         Scene scene = new Scene(basePane());
         scene.getStylesheets().add("style.css");
-        pStage.setScene(scene);
-        pStage.setWidth(700);
-        pStage.setHeight(800);
-//        placeShips();
+        stage.setScene(scene);
+        stage.setWidth(700);
+        stage.setHeight(800);
+    }
+
+    private void drawBoard() {
+        int i = 0;
+        for (Node n : playPane.getChildren()) {
+            n.getStyleClass().clear();
+            n.getStyleClass().add("boardCell");
+            if(!shipStock.isEmpty()){
+                n.setId("bcHori");
+                if (vertPlace)
+                    n.setId("bcVert");
+            }
+            else
+                n.setId(null);
+            int idx = i;
+            n.setOnScroll((e) -> {
+                scroll();
+            });
+            n.setOnMouseClicked(event -> {
+                if (event.getButton() == MouseButton.PRIMARY)
+                    placeShip(idx, !vertPlace);
+//                if (event.getButton() == MouseButton.SECONDARY) {
+//                    board.removeShip(idx);
+//                    drawBoard();
+//                }
+            });
+            i++;
+        }
+        drawShips();
+    }
+
+    //  Fix for double-trigger from setOnScroll
+    int sc = 0;
+
+    private void scroll() {
+        sc++;
+        if (sc % 2 == 0)
+            vertPlace = !vertPlace;
+        drawBoard();
+    }
+
+    private void drawShips() {
+        for (int i = 0; i < board.getSquares().length; i++) {
+            Square sq = board.getSquares()[i];
+            if (sq.getShip() != null) {
+                Node node = playPane.getChildren().get(i);
+                node.setId(sq.getShip().getName().toLowerCase());
+                node.getStyleClass().add("ship");
+                int idx = i;
+                node.setOnMouseClicked(event -> {
+//                    if (event.getButton() == MouseButton.PRIMARY)
+//                        placeShip(idx, !vertPlace);
+                    if (event.getButton() == MouseButton.SECONDARY) {
+                        board.removeShip(idx);
+                        drawBoard();
+                    }
+                });
+            }
+        }
+    }
+
+    private void error() {
+        new Thread(() -> {
+
+            playPane.setId("error");
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+            playPane.setId("battleground");
+        }).start();
+    }
+
+    private void placeShip(int pos, boolean isSide) {
+        if (board.placeShip(pos, isSide)) {
+            drawBoard();
+        } else {
+            error();
+        }
+    }
+
+    private void clearBoard() {
+        board.generateField();
+
+        drawBoard();
     }
 
     private void placeShips() {
@@ -49,46 +129,36 @@ public class BattlePlanView {
             boolean placed = false;
             while (!placed) {
                 board.generateField();
-                int s = 0;
-                for (Node n : pp.getChildren()) {
-                    n.setStyle("-fx-background-color:transparent;");
-                    int idx = s;
-                    n.setOnMouseClicked(event -> {
-                        Square sq = board.getSquares()[idx];
-                        if (sq.hitSquare().toLowerCase().contains("hit"))
-                            n.setStyle("-fx-background-color:maroon;");
-                        else
-                            n.setStyle("-fx-background-color:blue;");
-                    });
-                    s++;
-                }
-
-                for (Ship ship : board.getShips()) {
+                drawBoard();
+                for (Ship ship : new ArrayList<>(shipStock)) {
                     try {
-                        Thread.sleep(100);
+                        Thread.sleep(75);
                     } catch (InterruptedException e) {
                         throw new RuntimeException(e);
                     }
                     placed = board.generateShips(ship);
                     if (!placed) {
-                        pp.setId("error");
+                        playPane.setId("error");
                         try {
                             Thread.sleep(1000);
                         } catch (InterruptedException e) {
                             throw new RuntimeException(e);
                         }
-                        pp.setId("battleground");
+                        playPane.setId("battleground");
                         break;
                     }
                     for (int i = 0; i < board.getSquares().length; i++) {
                         Square sq = board.getSquares()[i];
                         if (sq.getShip() != null) {
-                            pp.getChildren().get(i).setStyle("-fx-background-color: " + sq.getColor() + ";-fx-text-fill:white;");
+                            Node node = playPane.getChildren().get(i);
+                            node.setId(sq.getShip().getName().toLowerCase());
+                            node.getStyleClass().add("ship");
                         }
-
                     }
+                    Platform.runLater(() -> {
+                            shipStock.remove(ship);
+                    });
                 }
-
             }
         };
         new Thread(runner).start();
@@ -100,18 +170,92 @@ public class BattlePlanView {
         HBox hBox = new HBox();
         HBox btnBox = new HBox();
         Label rndBtn = new Label();
+        Label clrBtn = new Label();
+        Label extBtn = new Label();
         Label playBtn = new Label();
-//        pane.setPrefWidth(400);
-//        pane.setPrefHeight(600);
+
+//        ListView<Ship> listView = new ListView<>();
+//        listView.setItems(shipStock);
+//        listView.setCellFactory(p -> new ShipCell(10));
+//        listView.setOrientation(Orientation.HORIZONTAL);
+//        listView.setId("listView");
+//        listView.setMouseTransparent(true);
+//        listView.setPrefHeight(30);
+//        listView.setMinHeight(30);
+//        listView.setMaxWidth(465);
+
+        VBox listBox = new VBox();
+
+        Label shipYard = new Label();
+        shipYard.setText("Shipyard:");
+//        shipYard.setAlignment(Pos.CENTER_LEFT);
+        shipYard.setId("txt");
+
+        HBox shipBox = new HBox();
+        shipBox.setAlignment(Pos.CENTER);
+        for (Ship ship : shipStock) {
+            HBox hull = new HBox();
+            for (int i = 0; i < ship.getSize(); i++) {
+                        StackPane stack = new StackPane();
+                        Rectangle rect = new Rectangle(10, 10);
+                        rect.setFill(Color.TRANSPARENT);
+                        stack.getChildren().add(rect);
+                        stack.getStyleClass().add("ship");
+                        stack.setId(ship.getName().toLowerCase());
+                        hull.getChildren().add(stack);
+            }
+            shipBox.getChildren().add(hull);
+        }
+        shipBox.setSpacing(15);
+        shipStock.addListener(new ListChangeListener<Ship>() {
+            @Override
+            public void onChanged(Change<? extends Ship> change) {
+                shipBox.getChildren().clear();
+                for (Ship ship : change.getList()) {
+                    HBox hull = new HBox();
+                    for (int i = 0; i < ship.getSize(); i++) {
+                        StackPane pane = new StackPane();
+                        Rectangle rect = new Rectangle(10, 10);
+                        rect.setFill(Color.TRANSPARENT);
+                        pane.getChildren().add(rect);
+                        pane.getStyleClass().add("ship");
+                        pane.setId(ship.getName().toLowerCase());
+                        hull.getChildren().add(pane);
+                    }
+                    shipBox.getChildren().add(hull);
+                }
+            }
+        });
+        listBox.getChildren().addAll(shipBox);
+
+        title.getStyleClass().add("btn");
         title.setText("BATTLEPLAN");
         title.setId("title");
+
+        rndBtn.getStyleClass().add("btn");
         rndBtn.setId("rndBtn");
         rndBtn.setText("RANDOMIZE");
-        rndBtn.setOnMouseClicked((e) -> placeShips());
+
+        clrBtn.getStyleClass().add("btn");
+        clrBtn.setId("clrBtn");
+        clrBtn.setText("CLEAR");
+
+        extBtn.getStyleClass().add("btn");
+        extBtn.setId("extBtn");
+        extBtn.setText("GO BACK");
+
+        playBtn.getStyleClass().add("btn");
         playBtn.setId("playBtn");
         playBtn.setText("READY UP");
 
-        hBox.getChildren().add(playPane());
+        rndBtn.setOnMouseClicked((e) -> {
+            placeShips();
+        });
+        clrBtn.setOnMouseClicked((e) -> clearBoard());
+
+
+        hBox.getChildren().add(SharedViews.playPane(playPane));
+//        hBox.getChildren().add(playPane());
         hBox.setAlignment(Pos.CENTER);
 
         btnBox.getChildren().addAll(rndBtn, playBtn);
@@ -120,94 +264,10 @@ public class BattlePlanView {
         btnBox.setId("btnBox");
 
 //        pane.setSpacing(50);
-        pane.getChildren().addAll(title, hBox, btnBox);
+        pane.getChildren().addAll(title, hBox, listBox, btnBox);
         pane.setAlignment(Pos.TOP_CENTER);
         pane.setId("basePane");
+        drawBoard();
         return pane;
-    }
-
-    private VBox playPane() {
-        VBox pane = new VBox();
-        VBox stack = new VBox();
-        HBox rows = new HBox();
-        stack.getChildren().add(topRow());
-        rows.getChildren().add(sideRow());
-        rows.getChildren().add(pp);
-        rows.getChildren().add(sideRow());
-        stack.getChildren().add(rows);
-        stack.getChildren().add(topRow());
-        pane.getChildren().add(stack);
-        pane.setId("playPane");
-        return pane;
-    }
-
-    private AnchorPane boardPane() {
-        AnchorPane pane = new AnchorPane();
-        pane.setId("battleground");
-        int x = 0;
-        int y = 0;
-        int i = 0;
-        for (Square square : board.getSquares()) {
-            if (i % 10 == 0) {
-                if (x != 0)
-                    y++;
-                x = 0;
-            }
-            Label boardCell = new Label();
-            boardCell.setPrefWidth(squareSize);
-            boardCell.setPrefHeight(squareSize);
-//            boardCell.setStyle(css);
-            boardCell.setAlignment(Pos.CENTER);
-            boardCell.setId("boardCell");
-
-            boardCell.setText("" + square.getCoordinate());
-
-
-            pane.getChildren().add(boardCell);
-
-            boardCell.setLayoutX((squareSize) * x);
-            boardCell.setLayoutY((squareSize) * y);
-            x++;
-            i++;
-        }
-        pane.setCursor(Cursor.NONE);
-        return pane;
-    }
-
-    private HBox topRow() {
-        HBox box = new HBox();
-        int i = 1;
-        Rectangle rect = new Rectangle();
-        rect.setWidth(squareSize / 2d);
-//        rect.setFill(Color.web("#272727"));
-        box.getChildren().add(rect);
-        for (char c : chArr) {
-            Label label = new Label();
-            label.setPrefWidth(squareSize);
-            label.setPrefHeight(squareSize / 2d);
-            label.setLayoutX(gap + (squareSize + gap) * i);
-            label.setAlignment(Pos.CENTER);
-            label.setStyle("-fx-text-fill:white;-fx-border-color:gray;-fx-border-width: 0 1 0 1;");
-            label.setText("" + c);
-            box.getChildren().add(label);
-            i++;
-        }
-//        box.setStyle("-fx-background-color:#272727;");
-        return box;
-    }
-
-    private VBox sideRow() {
-        VBox box = new VBox();
-        for (int i = 0; i < 10; i++) {
-            Label label = new Label();
-            label.setPrefWidth(squareSize / 2d);
-            label.setPrefHeight(squareSize);
-            label.setLayoutX(gap + (squareSize + gap) * i);
-            label.setAlignment(Pos.CENTER);
-            label.setStyle("-fx-text-fill:white;-fx-border-color:gray;-fx-border-width: 1 0 1 0;");
-            label.setText("" + i);
-            box.getChildren().add(label);
-        }
-        return box;
     }
 }

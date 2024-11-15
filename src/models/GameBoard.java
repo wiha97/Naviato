@@ -1,6 +1,10 @@
 package models;
 
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
@@ -8,6 +12,7 @@ public class GameBoard {
     private int size = 100;
     private Square[] squares;
     private List<Ship> ships = new ArrayList<>();
+    private ObservableList<Ship> deployable = FXCollections.observableList(ships);
     private final String chars = "ABCDEFGHIJ";
     private final char[] chArr = chars.toCharArray();
 
@@ -17,6 +22,8 @@ public class GameBoard {
 
     public void generateField() {
         squares = new Square[size];
+        ships.clear();
+        fillShips();
         int x = 0;
         int y = 0;
         for (int i = 0; i < size; i++) {
@@ -25,24 +32,40 @@ public class GameBoard {
                     y++;
                 x = 0;
             }
-            squares[i] = new Square("" + chArr[x] + y);
+            squares[i] = new Square("" + x + chArr[y]);
             x++;
         }
+        deployable = FXCollections.observableList(ships);
     }
 
-    public void placeShip(int pos, boolean isVert) {
-        if (!ships.isEmpty()) {
-            Ship ship = ships.get(0);
+    public boolean placeShip(int pos, boolean isVert) {
+        if (!deployable.isEmpty()) {
+            Ship ship = deployable.get(0);
             if (validate(pos, ship, isVert)) {
                 if (isVert)
                     horizontal(pos, ship);
                 else
                     vertical(pos, ship);
-                ships.remove(0);
-            } else
-                System.out.println("NOPE");
-        } else
-            System.out.println("No more ships");
+                deployable.remove(0);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public void removeShip(int i){
+        Ship ship = squares[i].getShip();
+        for(Square square : Arrays.stream(squares).filter(s -> s.getShip() == ship).toList()){
+            square.setShip(null);
+        }
+        deployable.addFirst(ship);
+    }
+    public void removeShip(Ship ship){
+//        Ship ship = squares[i].getShip();
+        for(Square square : Arrays.stream(squares).filter(s -> s.getShip() == ship).toList()){
+            square.setShip(null);
+        }
+        deployable.addFirst(ship);
     }
 
     public boolean generateShips(Ship ship) {
@@ -58,6 +81,7 @@ public class GameBoard {
             if(attempts >= MAX)
                 return false;
         }
+//        return placeShip(pos, isSide);
         if (isSide)
             horizontal(pos, ship);
         else
@@ -170,23 +194,27 @@ public class GameBoard {
     }
 
     private void fillShips() {
-        ships.add(new Carrier());
+        deployable.add(new Carrier());
 
-        ships.add(new Cruiser());
-        ships.add(new Cruiser());
+        deployable.add(new Cruiser());
+        deployable.add(new Cruiser());
 
-        ships.add(new Destroyer());
-        ships.add(new Destroyer());
-        ships.add(new Destroyer());
+        deployable.add(new Destroyer());
+        deployable.add(new Destroyer());
+        deployable.add(new Destroyer());
 
-        ships.add(new Submarine());
-        ships.add(new Submarine());
-        ships.add(new Submarine());
-        ships.add(new Submarine());
+        deployable.add(new Submarine());
+        deployable.add(new Submarine());
+        deployable.add(new Submarine());
+        deployable.add(new Submarine());
     }
 
     public List<Ship> getShips() {
         return ships;
+    }
+
+    public ObservableList<Ship> getDeployable() {
+        return deployable;
     }
 
     public Square[] getSquares() {
