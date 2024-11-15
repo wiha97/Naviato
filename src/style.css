@@ -4,9 +4,13 @@
 	-fx-text-fill:white;
 	-fx-padding:15px;
 }
+#txt{
+	-fx-font-size:12;
+	-fx-text-fill:white;
+}
 #basePane{
 	-fx-background-color:#383A40;
-/*	-fx-text-fill:white;*/
+	-fx-margin:10%;
 }
 #playPane{
 	-fx-background-radius:25px;
@@ -17,6 +21,12 @@
 #btnBox{
 	-fx-padding:20px;
 }
+.btn {
+	-fx-padding:15px;
+	-fx-font-size:32px;
+	-fx-background-radius:50px;
+	-fx-text-fill:white;
+}
 #playBtn: hover{
 	-fx-opacity:0.8;
 /*	-fx-skew:40;*/
@@ -25,55 +35,86 @@
 	-fx-opacity:0.8;
 }
 #playBtn{
-	-fx-padding:15px;
 	-fx-background-color:darkgreen;
-	-fx-font-size:32px;
-	-fx-background-radius:50px;
-	-fx-text-fill:white;
 }
 #rndBtn{
-	-fx-padding:15px;
 	-fx-background-color:dodgerblue;
-	-fx-font-size:32px;
-	-fx-background-radius:50px;
-	-fx-text-fill:white;
 }
-#boardCell: hover {
+.boardCell: hover {
 	-fx-border-width:5px;
-	-fx-border-color:white;
+	-fx-border-color:maroon;
 	-fx-text-fill:white;
 	-fx-border-style:solid;
 }
-#boardCell{
+.boardCell{
 	-fx-border-width:1px;
 	-fx-border-color:#303030;
 	-fx-border-style:dashed;
-	-fx-background-color:dodgerblue;
 	-fx-text-fill:transparent;
+	-fx-background-color:transparent;
+}
+#bcVert: hover{
+	-fx-border-width:5 5 0 5;
+	-fx-border-color:white;
+}
+#bcHori: hover{
+	-fx-border-width:5 0 5 5;
+	-fx-border-color:white;
+}
+.list-cell{
+	-fx-text-fill:white;
+	-fx-background-color:transparent;
+}
+.list-view{
+	-fx-border-width:0;
+	-fx-text-fill:white;
+	-fx-background-color:transparent;
+/*	-fx-background-color:red;*/
+}
+.guide{
+	-fx-text-fill:white;
+	-fx-border-color:gray;
+}
+#hg{
+	-fx-border-width:0 1 0 1;
+}
+#vg{
+	-fx-border-width:1 0 1 0;
+}
+#splash{
+	-fx-background-color:navy;
 }
 #battleground{
 	-fx-background-color:dodgerblue;
 }
 #error{
 	-fx-background-color:maroon;
-/*	-fx-border-width:2px;*/
-/*	-fx-border-color:maroon;*/
-/*	-fx-border-style:solid;*/
 }
 #shipHit{
-	-fx-backgroound-color:red;
+	-fx-background-color:maroon;
+	-fx-text-fill:white;
+}
+.ship: hover{/*
+	-fx-border-width:5px;
+	-fx-border-color:white;
+	-fx-text-fill:white;
+	-fx-border-style:solid;*/
+	-fx-border-color:white;
+}
+.ship{
+	-fx-text-fill:white;
 }
 #carrier{
-	-fx-backgroound-color:gray;
+	-fx-background-color:gray;
 }
 #cruiser{
-	-fx-backgroound-color:gray;
+	-fx-background-color:green;
 }
 #destroyer{
-	-fx-backgroound-color:gray;
+	-fx-background-color:darkorange;
 }
 #submarine{
-	-fx-backgroound-color:gray;
+	-fx-background-color:teal;
 }
 /*#hitCell{
 	-fx-background-color:red;
