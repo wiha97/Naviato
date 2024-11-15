@@ -1,17 +1,7 @@
 package managers;
 
-import javafx.geometry.Pos;
-import javafx.scene.Scene;
-import javafx.scene.control.Label;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
-import javafx.scene.text.Font;
 import javafx.stage.Stage;
-import views.BattlePlanView;
-import views.ClientView;
-import views.ServerView;
-import views.WelcomeView;
+import views.*;
 
 public class ViewManager {
     private static Stage baseStage;
@@ -31,6 +21,10 @@ public class ViewManager {
 
     public static void planView(){
         new BattlePlanView().start(baseStage);
+    }
+
+    public static void battleView(){
+        new BattleView().start(baseStage);
     }
 
 }

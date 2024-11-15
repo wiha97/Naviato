@@ -24,12 +24,12 @@ public class Square {
         }
     }
 
-    public String hitSquare(){
+    public boolean hitSquare(){
         if(ship != null) {
             ship.damage();
-            return "Hit ["+coordinate+"]";
+            return true;
         }
-        return "Miss ["+coordinate+"]";
+        return false;
     }
 
     public String getCoordinate() {
