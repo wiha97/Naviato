@@ -3,16 +3,18 @@ package network;
 import managers.GameManager;
 import models.GameBoard;
 import models.Square;
+import views.ClientView;
 
 import java.io.*;
 import java.net.Socket;
 
 public class ClientHandler implements Runnable{
 
-    private GameManager gameManager;
+    private final GameManager gameManager = new GameManager();
     private Square square;
     private String ip;
     private int port;
+
 
     public ClientHandler(String ip, int port) {
         this.ip = ip;
@@ -36,14 +38,18 @@ public class ClientHandler implements Runnable{
                 BufferedReader reader = new BufferedReader(new InputStreamReader(input));
 
                 writer.println(gameManager.firstShot());
+
                 while (true) {
                     //"millis" ska vara värdet från slider
-                    Thread.sleep(5000);
+                    int sliderSleep = (int) (ClientView.getSliderValue()*1000);
+                    Thread.sleep(sliderSleep);
 
                     String incomingShot = reader.readLine();
+                    System.out.println("Server: "+incomingShot);
                     if (incomingShot != null) {
                         String reply = gameManager.gameMessage(incomingShot);
                         writer.println(reply);
+                        System.out.println("Client: "+reply);
                     } else {
                         System.out.println("no feed");
                         break;

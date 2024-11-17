@@ -16,39 +16,39 @@ public class GameManager {
     public GameManager() {
         this.gameBoard = new GameBoard();
         this.gameBoard.generateField();
+        this.gameBoard.getSquares();
         this.availableSquares = new ArrayList<>(List.of(gameBoard.getSquares()));
         this.random = new Random();
+
     }
 
 
     public String gameMessage(String incomingShot) {
-    String[] inputToArray = incomingShot.split(" ");
-    String shotCoordinate = inputToArray[2];
+        String shotCoordinate = incomingShot.substring(7).trim();
+    //String[] inputToArray = incomingShot.split(" ");
+    //String shotCoordinate = inputToArray[2];
     System.out.println(shotCoordinate);
     Square checkShip = checkSquare(shotCoordinate);;
-    String reply;
-    String si = "i shot " + randomCoordinate(); //init
-    String s1 = "h shot " + randomCoordinate(); //hit+koordinat
-    String s2 = "m shot " + randomCoordinate(); //miss
-    String s3 = "game over"; //Looooser!
-    String s4 = "s shot " + randomCoordinate(); //Sänkt + koordinat
 
     if (checkShip.getShip() != null) {
         checkShip.setHit(true);
 
         if (checkShip.getShip().isSunk()) {
-            reply = s4;
+            if (gameOver()){
+                return "game over";
+            }else{
+                return "s shot " + randomCoordinate();
+            }
         } else {
-            reply = s1;
-            if (gameOver()) {
-                reply = s3;
+            return "h shot " + randomCoordinate();
             }
         }
-
-    } else {
-        reply = s2;
+    if (checkShip != null && checkShip.getShip() == null) {
+        return "m shot "+randomCoordinate();
     }
-    return reply;
+    return "No more coordinates";
+
+
 }
 
     public String randomCoordinate() {
@@ -59,7 +59,10 @@ public class GameManager {
         int randomIndex = random.nextInt(availableSquares.size());
         Square randomSquare = availableSquares.get(randomIndex);
         availableSquares.remove(randomIndex);
-        return randomSquare.getCoordinate().toString();
+
+        System.out.println("Remaining available squares size: " + availableSquares.size()+randomSquare.getCoordinate());
+
+        return randomSquare.getCoordinate().toLowerCase();
     }
 
     public GameBoard getGameBoard() {
@@ -67,7 +70,7 @@ public class GameManager {
     }
     private Square checkSquare (String shotCoordinate) {
         for (Square square : gameBoard.getSquares()) {
-            if (square.getCoordinate().equals(shotCoordinate)) {
+            if (square.getCoordinate().toLowerCase().equals(shotCoordinate)) {
                 return square;
             }
         }
