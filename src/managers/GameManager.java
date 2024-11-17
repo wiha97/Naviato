@@ -25,8 +25,6 @@ public class GameManager {
 
     public String gameMessage(String incomingShot) {
         String shotCoordinate = incomingShot.substring(7).trim();
-    //String[] inputToArray = incomingShot.split(" ");
-    //String shotCoordinate = inputToArray[2];
     System.out.println(shotCoordinate);
     Square checkShip = checkSquare(shotCoordinate);;
 
