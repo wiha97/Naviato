@@ -198,7 +198,7 @@ public class SharedViews {
             public void onChanged(Change<? extends String> change) {
                 logBox.getChildren().clear();
                 int i = 0;
-                for (String log : change.getList().reversed()) {
+                for (String log : change.getList()) {
                     Label label = new Label(log);
                     label.getStyleClass().add("txt");
                     label.setId("log");
