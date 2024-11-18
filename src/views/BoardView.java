@@ -19,11 +19,14 @@ import models.Square;
 
 public class BoardView {
     int size = 50;
+    private boolean isOpponent;
+    private boolean isSide;
     AnchorPane pane;
     GameBoard board;
 
-    public BoardView(GameBoard board){
+    public BoardView(GameBoard board, boolean isOp){
         this.board = board;
+        isOpponent = isOp;
     }
 
     public VBox playPane(AnchorPane pane) {
@@ -117,24 +120,59 @@ public class BoardView {
     public void drawBoard() {
         int i = 0;
         for (Node n : pane.getChildren()) {
+            int idx = i;
+            Square square = board.getSquares()[idx];
             n.getStyleClass().clear();
             n.getStyleClass().add("boardCell");
-            int idx = i;
-//            n.setOnScroll((e) -> {
-//                scroll();
-//                drawBoard(pane, board);
-//            });
+            if(!isOpponent && !board.getDeployable().isEmpty()) {
+                if(isSide)
+                    n.setId("bcHori");
+                else
+                    n.setId("bcVert");
+            }
+            else {
+                if(board.getSquares()[idx].isHit())
+                    n.setId("shipHit");
+                else
+                    n.setId(null);
+            }
+            n.setOnScroll((e) -> {
+                scroll();
+                drawBoard();
+            });
             n.setOnMouseClicked(event -> {
                 if (event.getButton() == MouseButton.PRIMARY)
-                    board.getLogList().add("Shot " + board.getSquares()[idx].getCoordinate());
-//                if (event.getButton() == MouseButton.SECONDARY) {
-//                    board.removeShip(idx);
-//                    drawBoard();
-//                }
+                    if(isOpponent) {
+                        board.getLogList().add("Shot " + board.getSquares()[idx].getCoordinate());
+
+                        //  Confirm with opponent if hit
+                        square.hitSquare();
+                        if(square.isHit())
+                            n.setId("shipHit");
+                        else
+                            n.setId("splash");
+                    }
+                    else
+                        placeShip(idx);
             });
             i++;
         }
-        drawShips();
+        if(!isOpponent)
+            drawShips();
+    }
+
+    int scrollCount = 0;
+    public void scroll() {
+        if(scrollCount++ % 2 == 0)
+            isSide = !isSide;
+    }
+
+    private void placeShip(int pos) {
+        if (board.placeShip(pos, isSide)) {
+            drawBoard();
+        } else {
+            SharedViews.error(pane);
+        }
     }
 
     private void drawShips() {
@@ -146,12 +184,10 @@ public class BoardView {
                 node.getStyleClass().add("ship");
                 int idx = i;
                 node.setOnMouseClicked(event -> {
-//                    if (event.getButton() == MouseButton.PRIMARY)
-//                        placeShip(idx, !vertPlace);
-//                    if (event.getButton() == MouseButton.SECONDARY) {
-//                        board.removeShip(idx);
-//                        drawBoard();
-//                    }
+                    if (event.getButton() == MouseButton.SECONDARY) {
+                        board.removeShip(idx);
+                        drawBoard();
+                    }
                 });
             }
         }

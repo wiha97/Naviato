@@ -17,8 +17,8 @@ import models.GameBoard;
 public class BattleView {
     private GameBoard opponentBoard = new GameBoard();
     private GameBoard playerBoard = GameManager.getGameBoard();
-    private BoardView playerView = new BoardView(playerBoard);
-    private BoardView targetView = new BoardView(opponentBoard);
+    private BoardView playerView = new BoardView(playerBoard, false);
+    private BoardView targetView = new BoardView(opponentBoard, true);
     private AnchorPane playPane = playerView.boardPane(30);
     private AnchorPane targetPane = targetView.boardPane(60);
 
@@ -54,30 +54,14 @@ public class BattleView {
         trgtBox.setAlignment(Pos.CENTER);
 //        trgtBox.getChildren().add(SharedViews.playPane(targetPane));
         trgtBox.getChildren().addAll(targetView.playPane(targetPane), listBox);
+
         targetView.drawBoard();
 
         VBox playBox = new VBox();
-        playBox.setAlignment(Pos.TOP_CENTER);
+        playBox.setAlignment(Pos.CENTER);
+        playBox.setSpacing(5);
+        playBox.getChildren().addAll(playerView.playPane(playPane), SharedViews.logView(opponentBoard.getLogList()));
 
-        VBox logBox = new VBox();
-        logBox.setPrefHeight(300);
-        logBox.setPrefWidth(300);
-        logBox.setId("shipYard");
-        logBox.setPadding(new Insets(20));
-        opponentBoard.getLogList().addListener(new ListChangeListener<String>() {
-            @Override
-            public void onChanged(Change<? extends String> change) {
-                logBox.getChildren().clear();
-                for(String log : change.getList()){
-                    Label label = new Label(log);
-                    label.setId("txt");
-                    logBox.getChildren().add(label);
-                }
-            }
-        });
-
-        //        playBox.getChildren().add(SharedViews.playPane(playPane));
-        playBox.getChildren().addAll(playerView.playPane(playPane), logBox);
         playerView.drawBoard();
         playPane.setMouseTransparent(true);
         playPane.setCursor(Cursor.DEFAULT);
