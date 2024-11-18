@@ -62,14 +62,7 @@ public class GameBoard {
             square.setShip(null);
         }
         deployable.addFirst(ship);
-    }
-
-    public void removeShip(Ship ship) {
-//        Ship ship = squares[i].getShip();
-        for (Square square : Arrays.stream(squares).filter(s -> s.getShip() == ship).toList()) {
-            square.setShip(null);
-        }
-        deployable.addFirst(ship);
+        System.out.println("removed " + ship.getName());
     }
 
     public boolean generateShips(Ship ship) {
@@ -85,7 +78,6 @@ public class GameBoard {
             if (attempts >= MAX)
                 return false;
         }
-//        return placeShip(pos, isSide);
         if (isSide)
             horizontal(pos, ship);
         else
