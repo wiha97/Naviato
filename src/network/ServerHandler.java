@@ -96,7 +96,7 @@ public class ServerHandler implements Runnable {
             code = "m";
         }
 
-        return code + " shot " + GameManager.printRandomCoordinate();
+        return code + " shot " + GameManager.randomCoordinate();
     }
 
     private boolean isHit(String coordinates) {

@@ -61,7 +61,7 @@ public class GameBoard {
         for (Square square : Arrays.stream(squares).filter(s -> s.getShip() == ship).toList()) {
             square.setShip(null);
         }
-        deployable.addFirst(ship);
+        deployable.add(0,ship);
     }
 
     public void removeShip(Ship ship) {
@@ -69,7 +69,7 @@ public class GameBoard {
         for (Square square : Arrays.stream(squares).filter(s -> s.getShip() == ship).toList()) {
             square.setShip(null);
         }
-        deployable.addFirst(ship);
+        deployable.add(0,ship);
     }
 
     public boolean generateShips(Ship ship) {

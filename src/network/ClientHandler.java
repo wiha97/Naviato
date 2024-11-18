@@ -10,7 +10,7 @@ import java.net.Socket;
 //JJ
 public class ClientHandler implements Runnable{
 
-    private final GameManager gameManager = new GameManager();
+    //private final GameManager gameManager = new GameManager();
     private Square square;
     private String ip;
     private int port;
@@ -37,7 +37,7 @@ public class ClientHandler implements Runnable{
                 InputStream input = socket.getInputStream();
                 BufferedReader reader = new BufferedReader(new InputStreamReader(input));
 
-                writer.println(gameManager.firstShot());
+                writer.println(GameManager.firstShot());
 
                 while (true) {
                     int sliderSleep = (int) (ClientView.getSliderValue()*1000);
@@ -46,7 +46,7 @@ public class ClientHandler implements Runnable{
                     String incomingShot = reader.readLine();
                     System.out.println("Server: "+incomingShot);
                     if (incomingShot != null) {
-                        String reply = gameManager.gameMessage(incomingShot);
+                        String reply = GameManager.gameMessage(incomingShot);
                         writer.println(reply);
                         System.out.println("Client: "+reply);
                     } else {

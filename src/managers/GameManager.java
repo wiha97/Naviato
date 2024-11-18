@@ -9,21 +9,21 @@ import java.util.Random;
 
 public class GameManager {
 
-    private GameBoard gameBoard;
-    private  List<Square>availableSquares;
-    private  Random random;
+    private static GameBoard gameBoard = new GameBoard();
+    private static  List<Square>availableSquares;
+    private static  Random random;
 
-    public GameManager() {
-        this.gameBoard = new GameBoard();
-        this.gameBoard.generateField();
-        this.gameBoard.getSquares();
-        this.availableSquares = new ArrayList<>(List.of(gameBoard.getSquares()));
-        this.random = new Random();
-
-    }
+//    public static  GameManager() {
+//        this.gameBoard = new GameBoard();
+//        this.gameBoard.generateField();
+//        this.gameBoard.getSquares();
+//        this.availableSquares = new ArrayList<>(List.of(gameBoard.getSquares()));
+//        this.random = new Random();
+//
+//    }
 
 // JJ & FP
-    public String gameMessage(String incomingShot) {
+    public static  String gameMessage(String incomingShot) {
         String shotCoordinate = incomingShot.substring(7).trim();
     System.out.println(shotCoordinate);
     Square checkShip = checkSquare(shotCoordinate);;
@@ -49,7 +49,7 @@ public class GameManager {
 
 }
 
-    public String randomCoordinate() {
+    public static  String randomCoordinate() {
         if(availableSquares.isEmpty()){
             return "No more coordinates";
         }
@@ -61,10 +61,10 @@ public class GameManager {
         return randomSquare.getCoordinate().toLowerCase();
     }
 
-    public GameBoard getGameBoard() {
+    public static  GameBoard getGameBoard() {
         return gameBoard;
     }
-    private Square checkSquare (String shotCoordinate) {
+    private static Square checkSquare (String shotCoordinate) {
         for (Square square : gameBoard.getSquares()) {
             if (square.getCoordinate().toLowerCase().equals(shotCoordinate)) {
                 return square;
@@ -73,7 +73,7 @@ public class GameManager {
         return null;
     }
 
-    private boolean gameOver(){
+    private static boolean gameOver(){
         for (Square square : gameBoard.getSquares()){
             if (square.getShip() != null && !square.getShip().isSunk()) {
                 return false;
@@ -81,7 +81,7 @@ public class GameManager {
         }
         return true;
     }
-    public String firstShot() {
+    public static  String firstShot() {
         return "i shot " + randomCoordinate();
     }
 
