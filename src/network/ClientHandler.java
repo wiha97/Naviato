@@ -7,7 +7,7 @@ import views.ClientView;
 
 import java.io.*;
 import java.net.Socket;
-
+//JJ
 public class ClientHandler implements Runnable{
 
     private final GameManager gameManager = new GameManager();
@@ -40,7 +40,6 @@ public class ClientHandler implements Runnable{
                 writer.println(gameManager.firstShot());
 
                 while (true) {
-                    //"millis" ska vara värdet från slider
                     int sliderSleep = (int) (ClientView.getSliderValue()*1000);
                     Thread.sleep(sliderSleep);
 
@@ -51,7 +50,7 @@ public class ClientHandler implements Runnable{
                         writer.println(reply);
                         System.out.println("Client: "+reply);
                     } else {
-                        System.out.println("no feed");
+                        System.out.println("No more shots");
                         break;
 
                     }

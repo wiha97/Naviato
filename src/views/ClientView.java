@@ -14,7 +14,7 @@ import managers.ViewManager;
 import models.GameBoard;
 import network.ClientHandler;
 
-
+//JJ
 public class ClientView {
 
     private static Slider slider;
@@ -83,7 +83,7 @@ public class ClientView {
             ClientHandler clientHandler = new ClientHandler(IP,port);
             Thread clientThread = new Thread(clientHandler);
             clientThread.start();
-            //ViewManager.planView();
+            ViewManager.planView();
 
         });
 

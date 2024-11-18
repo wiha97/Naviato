@@ -22,7 +22,7 @@ public class GameManager {
 
     }
 
-
+// JJ & FP
     public String gameMessage(String incomingShot) {
         String shotCoordinate = incomingShot.substring(7).trim();
     System.out.println(shotCoordinate);
@@ -57,8 +57,6 @@ public class GameManager {
         int randomIndex = random.nextInt(availableSquares.size());
         Square randomSquare = availableSquares.get(randomIndex);
         availableSquares.remove(randomIndex);
-
-        System.out.println("Remaining available squares size: " + availableSquares.size()+randomSquare.getCoordinate());
 
         return randomSquare.getCoordinate().toLowerCase();
     }
