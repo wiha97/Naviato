@@ -4,9 +4,12 @@
 	-fx-text-fill:white;
 	-fx-padding:15px;
 }
-#txt{
+.txt{
 	-fx-font-size:12;
 	-fx-text-fill:white;
+}
+#log{
+	-fx-font-size:24;
 }
 #basePane{
 	-fx-background-color:#383A40;
@@ -42,13 +45,14 @@
 }
 .boardCell: hover {
 	-fx-border-width:5px;
-	-fx-border-color:maroon;
+	-fx-border-color:white;
 	-fx-text-fill:white;
 	-fx-border-style:solid;
 }
 .boardCell{
 	-fx-border-width:1px;
-	-fx-border-color:#303030;
+	-fx-border-color:#404040;
+/*	-fx-border-color:#303030;*/
 	-fx-border-style:dashed;
 	-fx-text-fill:transparent;
 	-fx-background-color:transparent;
@@ -70,6 +74,22 @@
 	-fx-text-fill:white;
 	-fx-background-color:transparent;
 /*	-fx-background-color:red;*/
+}
+.scroll-pane{
+	-fx-background-color:transparent;
+}
+.scroll-pane > .viewport{
+	-fx-background-color:transparent;
+}
+.scroll-bar{
+	-fx-background-color:transparent;
+}
+.scroll-bar: horizontal{
+	visibility: hidden;
+}
+.scroll-bar > .increment-button > .increment-arrow,
+.scroll-bar > .decrement-button > .decrement-arrow{
+	visibility: hidden
 }
 .guide{
 	-fx-text-fill:white;

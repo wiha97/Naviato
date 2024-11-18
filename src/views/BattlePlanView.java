@@ -8,17 +8,12 @@ import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
-import javafx.scene.control.ListView;
-import javafx.scene.input.MouseButton;
 import javafx.scene.layout.*;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 import managers.GameManager;
 import managers.ViewManager;
 import models.GameBoard;
 import models.Ship;
-import models.ShipCell;
 import models.Square;
 
 import java.util.ArrayList;
@@ -26,8 +21,8 @@ import java.util.ArrayList;
 public class BattlePlanView {
     private GameBoard board = GameManager.getGameBoard();
     private ObservableList<Ship> shipStock = board.getDeployable();
-    AnchorPane playPane = SharedViews.boardPane(50);
-    boolean vertPlace = true;
+    private BoardView boardView = new BoardView(board, false);
+    AnchorPane playPane = boardView.boardPane(50);
 
 
     public void start(Stage stage) {
@@ -35,68 +30,9 @@ public class BattlePlanView {
         Scene scene = new Scene(basePane());
         scene.getStylesheets().add("style.css");
         stage.setScene(scene);
-        stage.setWidth(800);
-//        stage.setHeight(800);
+        stage.setWidth(1180);
+        stage.setHeight(820);
     }
-
-//    private void drawBoard() {
-//        int i = 0;
-//        for (Node n : playPane.getChildren()) {
-//            n.getStyleClass().clear();
-//            n.getStyleClass().add("boardCell");
-//            if(!shipStock.isEmpty()){
-//                n.setId("bcHori");
-//                if (vertPlace)
-//                    n.setId("bcVert");
-//            }
-//            else
-//                n.setId(null);
-//            int idx = i;
-//            n.setOnScroll((e) -> {
-//                scroll();
-//            });
-//            n.setOnMouseClicked(event -> {
-//                if (event.getButton() == MouseButton.PRIMARY)
-//                    placeShip(idx, !vertPlace);
-////                if (event.getButton() == MouseButton.SECONDARY) {
-////                    board.removeShip(idx);
-////                    drawBoard();
-////                }
-//            });
-//            i++;
-//        }
-//        drawShips();
-//    }
-//
-//    //  Fix for double-trigger from setOnScroll
-//    int sc = 0;
-//
-//    private void scroll() {
-//        sc++;
-//        if (sc % 2 == 0)
-//            vertPlace = !vertPlace;
-//        drawBoard();
-//    }
-//
-//    private void drawShips() {
-//        for (int i = 0; i < board.getSquares().length; i++) {
-//            Square sq = board.getSquares()[i];
-//            if (sq.getShip() != null) {
-//                Node node = playPane.getChildren().get(i);
-//                node.setId(sq.getShip().getName().toLowerCase());
-//                node.getStyleClass().add("ship");
-//                int idx = i;
-//                node.setOnMouseClicked(event -> {
-////                    if (event.getButton() == MouseButton.PRIMARY)
-////                        placeShip(idx, !vertPlace);
-//                    if (event.getButton() == MouseButton.SECONDARY) {
-//                        board.removeShip(idx);
-//                        drawBoard();
-//                    }
-//                });
-//            }
-//        }
-//    }
 
     private void error() {
         new Thread(() -> {
@@ -113,7 +49,7 @@ public class BattlePlanView {
 
     private void placeShip(int pos, boolean isSide) {
         if (board.placeShip(pos, isSide)) {
-            SharedViews.drawBoard(playPane, board);
+            boardView.drawBoard();
         } else {
             error();
         }
@@ -122,7 +58,7 @@ public class BattlePlanView {
     private void clearBoard() {
         board.generateField();
 
-        SharedViews.drawBoard(playPane, board);
+        boardView.drawBoard();
     }
 
     private void placeShips() {
@@ -130,7 +66,7 @@ public class BattlePlanView {
             boolean placed = false;
             while (!placed) {
                 board.generateField();
-                SharedViews.drawBoard(playPane, board);
+                boardView.drawBoard();
                 for (Ship ship : new ArrayList<>(shipStock)) {
                     try {
                         Thread.sleep(75);
@@ -160,6 +96,7 @@ public class BattlePlanView {
                         shipStock.remove(ship);
                     });
                 }
+                boardView.drawBoard();
             }
         };
         new Thread(runner).start();
@@ -174,16 +111,6 @@ public class BattlePlanView {
         Label clrBtn = new Label();
         Label extBtn = new Label();
         Label playBtn = new Label();
-
-//        ListView<Ship> listView = new ListView<>();
-//        listView.setItems(shipStock);
-//        listView.setCellFactory(p -> new ShipCell(10));
-//        listView.setOrientation(Orientation.HORIZONTAL);
-//        listView.setId("listView");
-//        listView.setMouseTransparent(true);
-//        listView.setPrefHeight(30);
-//        listView.setMinHeight(30);
-//        listView.setMaxWidth(465);
 
         VBox listBox = new VBox();
 
@@ -218,7 +145,6 @@ public class BattlePlanView {
         flowPane.setAlignment(Pos.CENTER);
         flowPane.setVgap(15);
         flowPane.setHgap(15);
-//        flowPane.setPrefWrapLength(500);
         flowPane.setPrefWidth(400);
         flowPane.getChildren().addAll(rndBtn, clrBtn, extBtn, playBtn);
 
@@ -229,8 +155,7 @@ public class BattlePlanView {
         playBtn.setOnMouseClicked((e) -> ViewManager.battleView());
 
 
-        hBox.getChildren().add(SharedViews.playPane(playPane));
-//        hBox.getChildren().add(playPane());
+        hBox.getChildren().add(boardView.playPane(playPane));
         hBox.setAlignment(Pos.CENTER);
 
         btnBox.getChildren().addAll(flowPane);
@@ -238,11 +163,10 @@ public class BattlePlanView {
         btnBox.setSpacing(15);
         btnBox.setId("btnBox");
 
-//        pane.setSpacing(50);
         pane.getChildren().addAll(title, hBox, listBox, btnBox);
         pane.setAlignment(Pos.TOP_CENTER);
         pane.setId("basePane");
-        SharedViews.drawBoard(playPane, board);
+        boardView.drawBoard();
         return pane;
     }
 }
