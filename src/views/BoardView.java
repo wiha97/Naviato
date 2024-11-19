@@ -1,5 +1,6 @@
 package views;
 
+import javafx.application.Platform;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
@@ -12,10 +13,12 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
+import managers.AIManager;
 import managers.GameManager;
 import models.GameBoard;
 import models.Ship;
 import models.Square;
+import util.App;
 
 public class BoardView {
     int size = 50;
@@ -117,6 +120,15 @@ public class BoardView {
         return label;
     }
 
+    public void loop(){
+        new Thread(() -> {
+            while (GameManager.isRunning()) {
+                Platform.runLater(() -> drawBoard());
+                App.sleep(100);
+            }
+        }).start();
+    }
+
     public void drawBoard() {
         int i = 0;
         for (Node n : pane.getChildren()) {
@@ -131,8 +143,10 @@ public class BoardView {
                     n.setId("bcVert");
             }
             else {
-                if(board.getSquares()[idx].isHit())
-                    n.setId("shipHit");
+                if(square.isHit())
+                    n.setId("splash");
+                else if(square.isTarget())
+                    n.setId("targetCell");
                 else
                     n.setId(null);
             }
@@ -146,14 +160,22 @@ public class BoardView {
                         GameManager.getLogList().add(0, "Shot " + board.getSquares()[idx].getCoordinate());
 
                         //  Confirm with opponent if hit
+                        AIManager.getPossibleTargets(idx);
                         square.hitSquare();
                         if(square.isHit())
                             n.setId("shipHit");
                         else
                             n.setId("splash");
+                        drawBoard();
                     }
                     else
                         placeShip(idx);
+            });
+            n.setOnMouseMoved(mouseEvent -> {
+                if(isOpponent) {
+                    AIManager.getPossibleTargets(idx);
+                    drawBoard();
+                }
             });
             i++;
         }
@@ -182,6 +204,8 @@ public class BoardView {
                 Node node = pane.getChildren().get(i);
                 node.setId(sq.getShip().getName().toLowerCase());
                 node.getStyleClass().add("ship");
+                if(sq.isHit())
+                    node.setId("shipHit");
                 int idx = i;
                 node.setOnMouseClicked(event -> {
                     if (event.getButton() == MouseButton.SECONDARY) {

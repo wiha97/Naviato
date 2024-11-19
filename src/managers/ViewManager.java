@@ -37,7 +37,7 @@ public class ViewManager {
             } catch (InterruptedException ignore) {
             }
 
-            Platform.runLater(() -> battleView());
+//            Platform.runLater(() -> battleView());
         }).start();
 //        try {
 //            Thread.sleep(5000);

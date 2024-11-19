@@ -5,13 +5,13 @@ import javafx.collections.ObservableList;
 import models.GameBoard;
 import models.Square;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 public class GameManager {
 
+    private static boolean running = true;
     private static GameBoard gameBoard = new GameBoard();
+    private static GameBoard targetBoard = new GameBoard();
     private static List<Square> availableSquares;
     private static Random random = new Random();
     private static List<Integer> hitSquares = new ArrayList<>();
@@ -34,28 +34,42 @@ public class GameManager {
             String shotCoordinate = msg[0];
             Square checkShip = checkSquare(shotCoordinate);
 
-            System.out.println(shotCoordinate);
-            if (checkShip.getShip() != null) {
-                checkShip.setHit(true);
+//            System.out.println(shotCoordinate);
+//            if (checkShip.getShip() != null) {
+//                checkShip.setHit(true);
+//
+//                if (checkShip.getShip().isSunk()) {
+//                    if (gameOver()) {
+//                        return "game over";
+//                    } else {
+//                        return "s shot " + shotCoordinate;
+//                    }
+//                } else {
+//                    return "h shot " + shotCoordinate;
+//                }
+//            }
+//            if (checkShip != null && checkShip.getShip() == null) {
+//                return "m shot " + shotCoordinate;
+//            }
 
-                if (checkShip.getShip().isSunk()) {
-                    if (gameOver()) {
-                        return "game over";
-                    } else {
-                        return "s shot " + shotCoordinate;
-                    }
-                } else {
-                    return "h shot " + shotCoordinate;
-                }
-            }
-            if (checkShip != null && checkShip.getShip() == null) {
+            if(checkShip.hitSquare()){
+                if(gameOver())
+                    return "game over";
+                if(checkShip.getShip().isSunk())
+                    return "s shot " + shotCoordinate;
+                return "h shot " + shotCoordinate;
+            }else
                 return "m shot " + shotCoordinate;
-            }
+
+
         }   else{
             switch (msg[0]){
                 case "i":
                     break;
                 case "h":
+                    Square square = Arrays.stream(targetBoard.getSquares()).filter(s -> Objects.equals(s.getCoordinate(), msg[2])).toList().get(0);
+                    square.hitSquare();
+                    AIManager.getPossibleTargets(Arrays.stream(targetBoard.getSquares()).toList().indexOf(square));
                     break;
                 case "m":
                     break;
@@ -67,7 +81,7 @@ public class GameManager {
             return randomCoordinate();
             // Update board
         }
-        return "No more coordinates";
+//        return "No more coordinates";
 
 
     }
@@ -91,6 +105,10 @@ public class GameManager {
 
     public static GameBoard getGameBoard() {
         return gameBoard;
+    }
+
+    public static GameBoard getTargetBoard() {
+        return targetBoard;
     }
 
     private static Square checkSquare(String shotCoordinate) {
@@ -121,5 +139,13 @@ public class GameManager {
 
     public static ObservableList<String> getLogList() {
         return logList;
+    }
+
+    public static boolean isRunning() {
+        return running;
+    }
+
+    public static void setRunning(boolean running) {
+        GameManager.running = running;
     }
 }

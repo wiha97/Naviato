@@ -15,7 +15,7 @@ import managers.GameManager;
 import models.GameBoard;
 
 public class BattleView {
-    private GameBoard opponentBoard = new GameBoard();
+    private GameBoard opponentBoard = GameManager.getTargetBoard();
     private GameBoard playerBoard = GameManager.getGameBoard();
     private BoardView playerView = new BoardView(playerBoard, false);
     private BoardView targetView = new BoardView(opponentBoard, true);
@@ -67,7 +67,8 @@ public class BattleView {
         playerView.drawBoard();
         playPane.setMouseTransparent(true);
         playPane.setCursor(Cursor.DEFAULT);
-
+        playerView.loop();
+        targetView.loop();
 
         content.getChildren().addAll(trgtBox, playBox);
 
