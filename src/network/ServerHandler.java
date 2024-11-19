@@ -4,7 +4,9 @@ import managers.GameManager;
 import models.GameBoard;
 import models.Ship;
 import models.Square;
+import util.Print;
 import views.ServerView;
+
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -31,17 +33,19 @@ public class ServerHandler implements Runnable {
             serverSocket = new ServerSocket(port);
             serverSocket.setReuseAddress(true);
             running = true;
-            System.out.println("Server started on port " + port);
+            Print.line("Server started on port " + port);
+//            System.out.println("Server started on port " + port);
 
             while (running) {
                 clientSocket = serverSocket.accept();
-                System.out.println("Client connected: " + clientSocket.getInetAddress());
+                Print.line("Client connected: " + clientSocket.getInetAddress());
                 serverView.updateConnectionStatus("Client connected!");
 
                 handleClientCommunication(clientSocket);
             }
         } catch (IOException e) {
-            System.out.println("Error: " + e.getMessage());
+            Print.line("Error: " + e.getMessage());
+//            System.out.println("Error: " + e.getMessage());
         } finally {
             stopServer();
         }
@@ -57,15 +61,18 @@ public class ServerHandler implements Runnable {
             while (running) {
                 String incomingMessage = reader.readLine();
                 if (incomingMessage != null) {
-                    System.out.println("Received: " + incomingMessage);
+//                    System.out.println("Received: " + incomingMessage);
+                    Print.line("Received: " + incomingMessage);
                     String response = handleShotMessage(incomingMessage);
                     writer.println(response);
+                    writer.println(GameManager.randomCoordinate());
                 } else {
                     break;
                 }
             }
         } catch (IOException e) {
-            System.out.println("Communication error: " + e.getMessage());
+            Print.line("Communication error: " + e.getMessage());
+//            System.out.println("Communication error: " + e.getMessage());
         }
     }
 
@@ -73,12 +80,18 @@ public class ServerHandler implements Runnable {
         if (!gameInitialized && message.startsWith("i shot")) {
             gameInitialized = true;
             String coordinates = message.substring(7);
-            System.out.println("Game initialized by client at: " + coordinates);
+            Print.line("Game initialized by client at: " + coordinates);
+//            System.out.println("Game initialized by client at: " + coordinates);
             return handleGameShot(coordinates);
         }
 
         if (gameInitialized) {
-            String coordinates = message.substring(7);
+            String[] arr = message.split(" ");
+            String coordinates = "";
+            if (arr.length > 2) {
+                coordinates = arr[2];
+//            String coordinates = message.substring(7);
+            }
             return handleGameShot(coordinates);
         }
 
@@ -96,27 +109,29 @@ public class ServerHandler implements Runnable {
             code = "m";
         }
 
-        return code + " shot " + GameManager.randomCoordinate();
+        return code + " shot " + coordinates;
     }
 
     private boolean isHit(String coordinates) {
         return false;
-       //logik för att kontrollera hit
+        //logik för att kontrollera hit
     }
 
     private boolean checkIfShipSunk(String coordinates) {
         return false;
         //logik för att kontrollera om skepp sjunkit
     }
-    
+
     public void stopServer() {
         running = false;
         try {
             if (clientSocket != null && !clientSocket.isClosed()) clientSocket.close();
             if (serverSocket != null && !serverSocket.isClosed()) serverSocket.close();
-            System.out.println("Server stopped.");
+            Print.line("Server stopped.");
+//            System.out.println("Server stopped.");
         } catch (IOException e) {
-            System.out.println("Error stopping the server: " + e.getMessage());
+            Print.line("Error stopping the server: " + e.getMessage());
+//            System.out.println("Error stopping the server: " + e.getMessage());
         }
     }
 
