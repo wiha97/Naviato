@@ -1,4 +1,4 @@
-package JWutil;
+package util;
 
 public class App {
 

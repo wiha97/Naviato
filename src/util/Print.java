@@ -1,6 +1,8 @@
-package JWutil;
+package util;
 
-import java.util.List;
+import javafx.application.Platform;
+import managers.GameManager;
+
 import java.util.Scanner;
 
 public class Print {
@@ -13,14 +15,19 @@ public class Print {
 
     public static void line(String text) {
         System.out.println(text);
+        Platform.runLater(() -> GameManager.getLogList().add(0, text));
     }
 
     public static void line(Object obj) {
-        System.out.println(obj);
+        line(obj.toString());
     }
 
     public static void line(int i) {
-        System.out.println(i);
+        line(""+i);
+    }
+
+    public static void debug (int text){
+        System.out.println(text);
     }
 
     public static void same(String text) {
@@ -49,58 +56,6 @@ public class Print {
 
     public static String info(String text){
         return GRAY + text + RESET;
-    }
-
-    public static String title(String title) {
-        int length = title.length();
-        return String.format("""
-                ============%s============
-                            %s
-                ============%s============""", filler(length, "="), title, filler(length, "="));
-    }
-
-    public static String title(String title, List<LogModel> list) {
-        int length = title.length();
-        return String.format("""
-                ============%s============ %s
-                            %s             %s
-                ============%s============ %s""", filler(length, "="), sizeCheck(list, 0),
-                title, list.size() > 0 ? sizeCheck(list, 1):"    No logs :(", filler(length, "="), sizeCheck(list, 2));
-    }
-
-    private static String sizeCheck(List<LogModel> list, int idx){
-        if(list.size() > idx)
-            return list.get(idx).toString();
-        return "";
-    }
-
-    public static String title(String title, String note) {
-        int length = title.length();
-        return String.format("""
-                ============%s============
-                            %s
-                            %s
-                ============%s============""", filler(length, "="), title, note, filler(length, "="));
-    }
-
-    private static String filler(int length) {
-        String filler = "";
-        for (int i = 0; i < length; i++) {
-            filler += "=";
-        }
-        return filler;
-    }
-    private static String filler(int length, String c) {
-        String filler = "";
-        for (int i = 0; i < length; i++) {
-            filler += c;
-        }
-        return filler;
-    }
-
-    public static String back() {
-
-        return "[<] [B]ack";
     }
 
     public static String newScan() {
