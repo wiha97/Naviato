@@ -10,7 +10,7 @@ public abstract class Ship {
         health--;
         }
     public boolean isSunk(){
-        return health == 0;
+        return health <= 0;
     }
 
     public String getName() {

@@ -63,9 +63,12 @@ public class ServerHandler implements Runnable {
                 if (incomingMessage != null) {
 //                    System.out.println("Received: " + incomingMessage);
                     Print.line("Received: " + incomingMessage);
-                    String response = handleShotMessage(incomingMessage);
+                    String response = GameManager.gameMessage(incomingMessage);
+                    Print.line("Sent: " + response);
                     writer.println(response);
-                    writer.println(GameManager.randomCoordinate());
+//                    String rc = GameManager.randomCoordinate();
+//                    writer.println(rc);
+//                    Print.line("Sent: " + rc);
                 } else {
                     break;
                 }
@@ -113,6 +116,7 @@ public class ServerHandler implements Runnable {
     }
 
     private boolean isHit(String coordinates) {
+
         return false;
         //logik för att kontrollera hit
     }

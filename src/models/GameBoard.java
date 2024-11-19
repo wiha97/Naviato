@@ -17,6 +17,7 @@ public class GameBoard {
     private final char[] chArr = chars.toCharArray();
 
     public GameBoard() {
+        generateField();
         fillShips();
     }
 

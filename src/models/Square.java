@@ -4,6 +4,7 @@ package models;
 public class Square {
     private Ship ship;
     private boolean hit;
+    private boolean target;
     private String coordinate;
 
     public Square(String xy){
@@ -25,6 +26,7 @@ public class Square {
     }
 
     public boolean hitSquare(){
+        hit = true;
         if(ship != null) {
             ship.damage();
             return true;
@@ -38,5 +40,13 @@ public class Square {
 
     public void setShip(Ship ship) {
         this.ship = ship;
+    }
+
+    public boolean isTarget() {
+        return target;
+    }
+
+    public void setTarget(boolean target) {
+        this.target = target;
     }
 }
