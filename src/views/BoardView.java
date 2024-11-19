@@ -143,7 +143,7 @@ public class BoardView {
             n.setOnMouseClicked(event -> {
                 if (event.getButton() == MouseButton.PRIMARY)
                     if(isOpponent) {
-                        board.getLogList().add("Shot " + board.getSquares()[idx].getCoordinate());
+                        GameManager.getLogList().add(0, "Shot " + board.getSquares()[idx].getCoordinate());
 
                         //  Confirm with opponent if hit
                         square.hitSquare();

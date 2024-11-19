@@ -5,9 +5,12 @@ import javafx.stage.Stage;
 import managers.GameManager;
 import managers.ViewManager;
 
+import java.util.Arrays;
+
 public class Naviato extends Application {
     public static void main(String[] args) {
         GameManager.getGameBoard().generateField();
+        GameManager.setAvailableSquares(Arrays.stream(GameManager.getGameBoard().getSquares()).toList());
         launch();
     }
 

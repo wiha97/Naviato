@@ -15,6 +15,8 @@ import managers.GameManager;
 import models.Ship;
 import models.Square;
 
+import java.util.Collections;
+
 public class SharedViews {
     private static int SQUARE_SIZE = 50;
     static String abc = "ABCDEFGHIJ";
@@ -183,21 +185,40 @@ public class SharedViews {
         }).start();
     }
 
-    public static VBox logView(ObservableList<String> list) {
+    public static VBox logView(int height) {
 
         VBox content = new VBox();
         ScrollPane scrollPane = new ScrollPane();
         VBox logBox = new VBox();
-        logBox.setPrefHeight(200);
+        logBox.setPrefHeight(height);
         logBox.setPrefWidth(300);
         content.setId("shipYard");
         content.setPadding(new Insets(15));
+                int i = 0;
+//                Collections.reverse(change.getList());
+                for (String log : GameManager.getLogList()) {
+                    Label label = new Label(log);
+                    label.getStyleClass().add("txt");
+                    label.setId("log");
+                    if(i++ == 0){
+                        HBox mBox = new HBox();
+                        mBox.setSpacing(2);
+                        Label indc = new Label(">");
+                        indc.setFont(new Font(24));
+                        indc.setTextFill(Color.GREEN);
+                        mBox.getChildren().addAll(indc, label);
+                        logBox.getChildren().add(mBox);
+                    }
+                    else
+                        logBox.getChildren().add(label);
+                }
 
-        list.addListener(new ListChangeListener<String>() {
+        GameManager.getLogList().addListener(new ListChangeListener<String>() {
             @Override
             public void onChanged(Change<? extends String> change) {
                 logBox.getChildren().clear();
                 int i = 0;
+//                Collections.reverse(change.getList());
                 for (String log : change.getList()) {
                     Label label = new Label(log);
                     label.getStyleClass().add("txt");

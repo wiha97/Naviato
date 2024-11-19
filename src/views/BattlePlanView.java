@@ -61,7 +61,7 @@ public class BattlePlanView {
         boardView.drawBoard();
     }
 
-    private void placeShips() {
+    public void placeShips() {
         Runnable runner = () -> {
             boolean placed = false;
             while (!placed) {
@@ -155,7 +155,7 @@ public class BattlePlanView {
         playBtn.setOnMouseClicked((e) -> ViewManager.battleView());
 
 
-        hBox.getChildren().add(boardView.playPane(playPane));
+        hBox.getChildren().addAll(boardView.playPane(playPane), SharedViews.logView(520));
         hBox.setAlignment(Pos.CENTER);
 
         btnBox.getChildren().addAll(flowPane);

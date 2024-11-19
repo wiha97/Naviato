@@ -1,8 +1,11 @@
 package network;
 
+import javafx.application.Platform;
 import managers.GameManager;
+import managers.ViewManager;
 import models.GameBoard;
 import models.Square;
+import util.Print;
 import views.ClientView;
 
 import java.io.*;
@@ -37,6 +40,8 @@ public class ClientHandler implements Runnable{
                 InputStream input = socket.getInputStream();
                 BufferedReader reader = new BufferedReader(new InputStreamReader(input));
 
+                Platform.runLater(() ->ViewManager.planView());
+
                 writer.println(GameManager.firstShot());
 
                 while (true) {
@@ -44,13 +49,17 @@ public class ClientHandler implements Runnable{
                     Thread.sleep(sliderSleep);
 
                     String incomingShot = reader.readLine();
-                    System.out.println("Server: "+incomingShot);
+//                    System.out.println("Server: "+incomingShot);
+                    Print.line("Received: " + incomingShot);
                     if (incomingShot != null) {
                         String reply = GameManager.gameMessage(incomingShot);
                         writer.println(reply);
-                        System.out.println("Client: "+reply);
+                        writer.println(GameManager.randomCoordinate());
+                        Print.line("Client: "+reply);
+//                        System.out.println("Client: "+reply);
                     } else {
-                        System.out.println("No more shots");
+                        Print.line("No more shots");
+//                        System.out.println("No more shots");
                         break;
 
                     }

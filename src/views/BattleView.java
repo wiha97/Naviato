@@ -27,6 +27,8 @@ public class BattleView {
         Scene scene = new Scene(basePane());
         scene.getStylesheets().add("style.css");
         stage.setScene(scene);
+        stage.setWidth(1180);
+        stage.setHeight(820);
     }
 
     private VBox basePane(){
@@ -60,7 +62,7 @@ public class BattleView {
         VBox playBox = new VBox();
         playBox.setAlignment(Pos.CENTER);
         playBox.setSpacing(5);
-        playBox.getChildren().addAll(playerView.playPane(playPane), SharedViews.logView(opponentBoard.getLogList()));
+        playBox.getChildren().addAll(playerView.playPane(playPane), SharedViews.logView(300));
 
         playerView.drawBoard();
         playPane.setMouseTransparent(true);

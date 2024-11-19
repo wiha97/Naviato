@@ -83,7 +83,6 @@ public class ClientView {
             ClientHandler clientHandler = new ClientHandler(IP,port);
             Thread clientThread = new Thread(clientHandler);
             clientThread.start();
-            ViewManager.planView();
 
         });
 
