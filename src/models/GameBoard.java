@@ -15,7 +15,6 @@ public class GameBoard {
     private ObservableList<Ship> deployable = FXCollections.observableList(ships);
     private final String chars = "abcdefghij";
     private final char[] chArr = chars.toCharArray();
-    private ObservableList<String> logList = FXCollections.observableList(new ArrayList<>());
 
     public GameBoard() {
         fillShips();
@@ -58,14 +57,6 @@ public class GameBoard {
 
     public void removeShip(int i) {
         Ship ship = squares[i].getShip();
-        for (Square square : Arrays.stream(squares).filter(s -> s.getShip() == ship).toList()) {
-            square.setShip(null);
-        }
-        deployable.add(0,ship);
-    }
-
-    public void removeShip(Ship ship) {
-//        Ship ship = squares[i].getShip();
         for (Square square : Arrays.stream(squares).filter(s -> s.getShip() == ship).toList()) {
             square.setShip(null);
         }
@@ -219,10 +210,6 @@ public class GameBoard {
 
     public Square[] getSquares() {
         return squares;
-    }
-
-    public ObservableList<String> getLogList() {
-        return logList;
     }
 }
 
