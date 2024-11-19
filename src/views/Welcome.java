@@ -1,14 +1,14 @@
-package app;
+package views;
 
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.Background;
+import managers.ViewManager;
 
 
 //Anna
@@ -17,8 +17,7 @@ public class Welcome extends Application {
         launch();
 
     }
-    @Override
-    public void start(Stage primaryStage) throws Exception {
+    public void start(Stage primaryStage){
         AnchorPane anchorPane = new AnchorPane();
         anchorPane.setPrefSize(400, 400);
 
@@ -38,10 +37,12 @@ public class Welcome extends Application {
 
         button.setOnAction(e -> {
             button.setStyle("-fx-background-color: red; -fx-text-fill: white;");
+            ViewManager.serverView();
         });
 
         button2.setOnAction(e -> {
             button2.setStyle("-fx-background-color: red; -fx-text-fill: white;");
+            ViewManager.clientView();
                 });
 
         anchorPane.getChildren().addAll(button, button2);

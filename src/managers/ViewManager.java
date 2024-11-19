@@ -7,8 +7,13 @@ public class ViewManager {
     private static Stage baseStage;
     public static void start(Stage stage){
         baseStage = stage;
-        new WelcomeView().start(baseStage);
-        stage.show();
+        welcomeView();
+//        new WelcomeView().start(baseStage);
+//        stage.show();
+    }
+
+    public static void welcomeView(){
+        new Welcome().start(baseStage);
     }
 
     public static void serverView(){
