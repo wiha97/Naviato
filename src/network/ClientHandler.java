@@ -17,6 +17,7 @@ public class ClientHandler implements Runnable{
     private Square square;
     private String ip;
     private int port;
+    private boolean running = true;
 
 
     public ClientHandler(String ip, int port) {
@@ -44,7 +45,7 @@ public class ClientHandler implements Runnable{
 
                 writer.println(GameManager.firstShot());
 
-                while (true) {
+                while (running) {
                     int sliderSleep = (int) (ClientView.getSliderValue()*1000);
                     Thread.sleep(sliderSleep);
 
@@ -69,11 +70,23 @@ public class ClientHandler implements Runnable{
                 }
 
 
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
+            } catch (IOException | InterruptedException e) {
+                Print.line("Error: "+e.getMessage() );
+
+            }finally {
+                disconnect();
             }
+        }
+    }
+    public void disconnect() {
+        running = false;
+        try {
+            if (socket != null && !socket.isClosed()) {
+                socket.close();
+            }
+            Print.line("Client disconnect");
+        } catch (IOException e) {
+            Print.line("Error: " + e.getMessage());
         }
     }
 
