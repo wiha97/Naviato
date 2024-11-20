@@ -51,4 +51,8 @@ public class ViewManager {
         new BattleView().start(baseStage);
     }
 
+    public static void gameOverView(){
+        new GameOverView().start(baseStage);
+    }
+
 }

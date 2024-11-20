@@ -30,7 +30,7 @@ public class GameManager {
     public static String gameMessage(String incomingShot) {
 //        String shotCoordinate = incomingShot.substring(7).trim();
         String[] msg = incomingShot.split(" ");
-        if(msg.length == 1) {
+        if (msg.length == 1) {
             String shotCoordinate = msg[0];
             Square checkShip = checkSquare(shotCoordinate);
 
@@ -52,28 +52,31 @@ public class GameManager {
 //                return "m shot " + shotCoordinate;
 //            }
 
-            if(checkShip.hitSquare()){
-                if(gameOver())
+            if (checkShip.hitSquare()) {
+                if (gameOver())
                     return "game over";
-                if(checkShip.getShip().isSunk())
+                if (checkShip.getShip().isSunk()) {
                     return "s shot " + shotCoordinate;
+                }
                 return "h shot " + shotCoordinate;
-            }else
+            } else
                 return "m shot " + shotCoordinate;
 
 
-        }   else{
-            switch (msg[0]){
+        } else {
+            Square square = Arrays.stream(targetBoard.getSquares()).filter(s -> Objects.equals(s.getCoordinate(), msg[2])).toList().get(0);
+            switch (msg[0]) {
                 case "i":
                     break;
                 case "h":
-                    Square square = Arrays.stream(targetBoard.getSquares()).filter(s -> Objects.equals(s.getCoordinate(), msg[2])).toList().get(0);
-                    square.hitSquare();
+                    square.hitSquare(true);
                     AIManager.getPossibleTargets(Arrays.stream(targetBoard.getSquares()).toList().indexOf(square));
                     break;
                 case "m":
+                    square.hitSquare(false);
                     break;
                 case "s":
+                    targetBoard.removeShip(0);
                     break;
                 default:
                     break;
@@ -86,14 +89,14 @@ public class GameManager {
 
     }
 
-    public static  String randomCoordinate() {
-        if(hitSquares.size() == gameBoard.getSquares().length){
+    public static String randomCoordinate() {
+        if (hitSquares.size() == gameBoard.getSquares().length) {
             return "No more coordinates";
         }
 
-        int randomIndex = random.nextInt(availableSquares.size());
+        int randomIndex = random.nextInt(100);
         while (hitSquares.contains(randomIndex)) {
-            randomIndex = random.nextInt(availableSquares.size());
+            randomIndex = random.nextInt(100);
         }
 
         Square randomSquare = availableSquares.get(randomIndex);

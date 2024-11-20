@@ -55,8 +55,10 @@ public class ClientHandler implements Runnable{
                     if (incomingShot != null) {
                         String reply = GameManager.gameMessage(incomingShot);
                         writer.println(reply);
-                        writer.println(GameManager.randomCoordinate());
                         Print.line("Client: "+reply);
+                        String rc = GameManager.randomCoordinate();
+                        writer.println(rc);
+                        Print.line("Client: "+rc);
 //                        System.out.println("Client: "+reply);
                     } else {
                         Print.line("No more shots");
