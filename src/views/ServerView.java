@@ -6,6 +6,7 @@ import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.Slider;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
@@ -13,9 +14,13 @@ import javafx.scene.text.Font;
 import managers.ViewManager;
 import network.ServerHandler;
 
+
+//Fredrik med lite korrigering av Wilhelm
+
 public class ServerView {
     private ServerHandler serverHandler;
     private Label connectionStatus;
+    private static Slider slider;
 
     public ServerView() {
         this.serverHandler = null;
@@ -100,6 +105,20 @@ public class ServerView {
             }
         });
 
+        VBox sliderBox = new VBox();
+        slider = new Slider(0, 5, 1);
+        slider.setMajorTickUnit(1);
+        slider.setBlockIncrement(1);
+        slider.setSnapToTicks(true);
+        slider.setShowTickLabels(true);
+        slider.setBackground(new Background(new BackgroundFill(Color.WHITE, null, null)));
+        sliderBox.setMaxWidth(200);
+
+        Label sliderLabel = new Label("Adjust fire delay in seconds:");
+        sliderLabel.setTextFill(Color.WHITE);
+        sliderLabel.setAlignment(Pos.CENTER);
+        sliderBox.getChildren().addAll(sliderLabel, slider);
+
         connectionBox.getChildren().addAll(connectionStatus);
 
         VBox buttonBox = new VBox();
@@ -108,10 +127,15 @@ public class ServerView {
         spacer.setMinHeight(20);
         buttonBox.getChildren().addAll(startServerBtn, spacer, stopServerBtn);
 
-        content.getChildren().addAll(title, serverStatus, connectionBox, portBox, buttonBox);
+        content.getChildren().addAll(title, serverStatus, connectionBox, portBox, sliderBox, buttonBox);
         content.setAlignment(Pos.CENTER);
 
         return new Scene(content, 500, 400);
+    }
+
+
+    public static double getSliderValue() {
+        return slider.getValue();
     }
 
     public void updateConnectionStatus(String message) {
