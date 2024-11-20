@@ -124,7 +124,7 @@ public class BoardView {
         new Thread(() -> {
             while (GameManager.isRunning()) {
                 Platform.runLater(() -> drawBoard());
-                App.sleep(100);
+                App.sleep(10);
             }
         }).start();
     }
@@ -136,20 +136,27 @@ public class BoardView {
             Square square = board.getSquares()[idx];
             n.getStyleClass().clear();
             n.getStyleClass().add("boardCell");
-            if(!isOpponent && !board.getDeployable().isEmpty()) {
-                if(isSide)
-                    n.setId("bcHori");
-                else
-                    n.setId("bcVert");
-            }
-            else {
-                if(square.isHit())
+//            if(!isOpponent && !board.getDeployable().isEmpty()) {
+//                if(isSide)
+//                    n.setId("bcHori");
+//                else
+//                    n.setId("bcVert");
+//            }
+//            else {
+                if(square.isHit()) {
+//                    if(isOpponent){
+                        n.setId("shipHit");
+//                    }
+//                    else
+//                        n.setId("splash");
+                }
+                else if(square.isMiss())
                     n.setId("splash");
                 else if(square.isTarget())
                     n.setId("targetCell");
                 else
                     n.setId(null);
-            }
+//            }
             n.setOnScroll((e) -> {
                 scroll();
                 drawBoard();
@@ -157,25 +164,19 @@ public class BoardView {
             n.setOnMouseClicked(event -> {
                 if (event.getButton() == MouseButton.PRIMARY)
                     if(isOpponent) {
-                        GameManager.getLogList().add(0, "Shot " + board.getSquares()[idx].getCoordinate());
-
-                        //  Confirm with opponent if hit
-                        AIManager.getPossibleTargets(idx);
-                        square.hitSquare();
-                        if(square.isHit())
-                            n.setId("shipHit");
-                        else
-                            n.setId("splash");
-                        drawBoard();
+//                        GameManager.getLogList().add(0, "Shot " + board.getSquares()[idx].getCoordinate());
+//
+//                        //  Confirm with opponent if hit
+//                        AIManager.getPossibleTargets(idx);
+//                        square.hitSquare();
+//                        if(square.isHit())
+//                            n.setId("shipHit");
+//                        else
+//                            n.setId("splash");
+//                        drawBoard();
                     }
                     else
                         placeShip(idx);
-            });
-            n.setOnMouseMoved(mouseEvent -> {
-                if(isOpponent) {
-                    AIManager.getPossibleTargets(idx);
-                    drawBoard();
-                }
             });
             i++;
         }

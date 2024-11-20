@@ -73,6 +73,9 @@ public class ServerHandler implements Runnable {
                     String response = GameManager.gameMessage(incomingMessage);
                     Print.line("Sent: " + response);
                     writer.println(response);
+                    String rc = GameManager.randomCoordinate();
+                    writer.println(rc);
+                    Print.line("sent: " + rc);
                 } else {
                     break;
                 }
