@@ -29,10 +29,11 @@ public class BattleView {
         stage.setScene(scene);
         stage.setWidth(1180);
         stage.setHeight(820);
+        GameManager.setRunning(false);
     }
 
     private VBox basePane(){
-        opponentBoard.generateField();
+//        opponentBoard.generateField();
         VBox vBox = new VBox();
         vBox.setId("basePane");
         vBox.setAlignment(Pos.TOP_CENTER);

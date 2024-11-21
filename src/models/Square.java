@@ -29,7 +29,7 @@ public class Square {
     public boolean hitSquare(){
         if(ship != null) {
             ship.damage();
-        hit = true;
+            hit = true;
             return true;
         }
         miss = true;

@@ -5,13 +5,15 @@ import managers.GameManager;
 import managers.ViewManager;
 import models.GameBoard;
 import models.Square;
+import util.App;
 import util.Print;
 import views.ClientView;
 
 import java.io.*;
 import java.net.Socket;
+
 //JJ
-public class ClientHandler implements Runnable{
+public class ClientHandler implements Runnable {
 
     //private final GameManager gameManager = new GameManager();
     private Square square;
@@ -41,12 +43,16 @@ public class ClientHandler implements Runnable{
                 InputStream input = socket.getInputStream();
                 BufferedReader reader = new BufferedReader(new InputStreamReader(input));
 
-                Platform.runLater(() ->ViewManager.planView());
+                Platform.runLater(() -> ViewManager.planView());
+                while (GameManager.isRunning()){
+                    App.sleep(3000);
+                    Print.line("Waiting...");
+                }
 
                 writer.println(GameManager.firstShot());
 
                 while (running) {
-                    int sliderSleep = (int) (ClientView.getSliderValue()*1000);
+                    int sliderSleep = (int) (ClientView.getSliderValue() * 1000);
                     Thread.sleep(sliderSleep);
 
                     String incomingShot = reader.readLine();
@@ -55,10 +61,15 @@ public class ClientHandler implements Runnable{
                     if (incomingShot != null) {
                         String reply = GameManager.gameMessage(incomingShot);
                         writer.println(reply);
-                        Print.line("Client: "+reply);
-                        String rc = GameManager.randomCoordinate();
-                        writer.println(rc);
-                        Print.line("Client: "+rc);
+                        Print.line("Client: " + reply);
+                        if (reply.length() > 2) {
+                            String rc = GameManager.randomCoordinate();
+                            writer.println(rc);
+                            Print.line("client: " + rc);
+                        }
+//                        String rc = GameManager.randomCoordinate();
+//                        writer.println(rc);
+//                        Print.line("Client: "+rc);
 //                        System.out.println("Client: "+reply);
                     } else {
                         Print.line("No more shots");
@@ -68,18 +79,18 @@ public class ClientHandler implements Runnable{
                     }
 
 
-
                 }
 
 
             } catch (IOException | InterruptedException e) {
-                Print.line("Error: "+e.getMessage() );
+                Print.line("Error: " + e.getMessage());
 
-            }finally {
+            } finally {
                 disconnect();
             }
         }
     }
+
     public void disconnect() {
         running = false;
         try {
@@ -91,9 +102,6 @@ public class ClientHandler implements Runnable{
             Print.line("Error: " + e.getMessage());
         }
     }
-
-
-
 
 
 }

@@ -26,7 +26,6 @@ public class BattlePlanView {
 
 
     public void start(Stage stage) {
-        board.generateField();
         Scene scene = new Scene(basePane());
         scene.getStylesheets().add("style.css");
         stage.setScene(scene);

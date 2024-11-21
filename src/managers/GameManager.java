@@ -4,6 +4,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import models.GameBoard;
 import models.Square;
+import views.BoardView;
 
 import java.util.*;
 
@@ -12,6 +13,8 @@ public class GameManager {
     private static boolean running = true;
     private static GameBoard gameBoard = new GameBoard();
     private static GameBoard targetBoard = new GameBoard();
+    private static BoardView playerView;
+    private static BoardView targetView;
     private static List<Square> availableSquares;
     private static Random random = new Random();
     private static List<Integer> hitSquares = new ArrayList<>();
@@ -25,6 +28,11 @@ public class GameManager {
 //        this.random = new Random();
 //
 //    }
+
+    public static void start(){
+        playerView = new BoardView(gameBoard, false);
+        targetView = new BoardView(targetBoard, true);
+    }
 
     // JJ & FP
     public static String gameMessage(String incomingShot) {
@@ -67,7 +75,7 @@ public class GameManager {
             Square square = Arrays.stream(targetBoard.getSquares()).filter(s -> Objects.equals(s.getCoordinate(), msg[2])).toList().get(0);
             switch (msg[0]) {
                 case "i":
-                    break;
+                    return gameMessage(msg[2]);
                 case "h":
                     square.hitSquare(true);
                     AIManager.getPossibleTargets(Arrays.stream(targetBoard.getSquares()).toList().indexOf(square));
@@ -150,5 +158,13 @@ public class GameManager {
 
     public static void setRunning(boolean running) {
         GameManager.running = running;
+    }
+
+    public static BoardView getPlayerView() {
+        return playerView;
+    }
+
+    public static BoardView getTargetView() {
+        return targetView;
     }
 }

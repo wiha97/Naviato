@@ -122,9 +122,9 @@ public class BoardView {
 
     public void loop(){
         new Thread(() -> {
-            while (GameManager.isRunning()) {
+            while (true) {
                 Platform.runLater(() -> drawBoard());
-                App.sleep(10);
+                App.sleep(100);
             }
         }).start();
     }

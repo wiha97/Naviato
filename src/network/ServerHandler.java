@@ -21,12 +21,10 @@ public class ServerHandler implements Runnable {
     private Socket clientSocket;
     private boolean running;
     private final ServerView serverView;
-    private final GameBoard gameBoard = GameManager.getGameBoard();
 
     public ServerHandler(int port, ServerView serverView) {
         this.port = port;
         this.serverView = serverView;
-        gameBoard.generateField();
     }
 
     @Override
@@ -66,16 +64,18 @@ public class ServerHandler implements Runnable {
                     Print.line("Sleep interrupted: " + e.getMessage());
                     break;
                 }
-
                 String incomingMessage = reader.readLine();
+
                 if (incomingMessage != null) {
                     Print.line("Received: " + incomingMessage);
                     String response = GameManager.gameMessage(incomingMessage);
                     Print.line("Sent: " + response);
                     writer.println(response);
-                    String rc = GameManager.randomCoordinate();
-                    writer.println(rc);
-                    Print.line("sent: " + rc);
+                    if(response.length() > 2) {
+                        String rc = GameManager.randomCoordinate();
+                        writer.println(rc);
+                        Print.line("sent: " + rc);
+                    }
                 } else {
                     break;
                 }
