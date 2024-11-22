@@ -10,6 +10,7 @@ import javafx.stage.Stage;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import managers.GameManager;
+import managers.ViewManager;
 
 //Anna
 public class GameOverView extends Application {
@@ -60,7 +61,8 @@ public class GameOverView extends Application {
         primaryStage.show();
     }
     private void startNewGame(Stage primaryStage) {
-        System.out.println("Start over!");
+        ViewManager.welcomeView();
+//        System.out.println("Start over!");
     }
     public static void gameOver(String[] args) {
         launch();

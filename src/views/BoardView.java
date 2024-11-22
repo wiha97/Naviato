@@ -1,25 +1,19 @@
 package views;
 
 import javafx.application.Platform;
-import javafx.collections.ListChangeListener;
-import javafx.collections.ObservableList;
-import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.*;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
-import managers.AIManager;
 import managers.GameManager;
 import models.GameBoard;
-import models.Ship;
 import models.Square;
 import util.App;
 
+//    WH
 public class BoardView {
     int size = 50;
     private boolean isOpponent;
@@ -27,7 +21,7 @@ public class BoardView {
     AnchorPane pane;
     GameBoard board;
 
-    public BoardView(GameBoard board, boolean isOp){
+    public BoardView(GameBoard board, boolean isOp) {
         this.board = board;
         isOpponent = isOp;
     }
@@ -37,7 +31,6 @@ public class BoardView {
         VBox content = new VBox();
         VBox stack = new VBox();
         HBox rows = new HBox();
-//        pane = boardPane();
         stack.getChildren().add(topRow());
         rows.getChildren().add(sideRow());
         rows.getChildren().add(pane);
@@ -120,7 +113,7 @@ public class BoardView {
         return label;
     }
 
-    public void loop(){
+    public void loop() {
         new Thread(() -> {
             while (true) {
                 Platform.runLater(() -> drawBoard());
@@ -136,34 +129,34 @@ public class BoardView {
             Square square = board.getSquares()[idx];
             n.getStyleClass().clear();
             n.getStyleClass().add("boardCell");
-//            if(!isOpponent && !board.getDeployable().isEmpty()) {
-//                if(isSide)
-//                    n.setId("bcHori");
-//                else
-//                    n.setId("bcVert");
-//            }
-//            else {
-                if(square.isHit()) {
+            if (!isOpponent && !board.getDeployable().isEmpty()) {
+                if (isSide)
+                    n.setId("bcHori");
+                else
+                    n.setId("bcVert");
+            } else {
+                if (square.isSunk())
+                    n.setId("sunk");
+                else if (square.isHit()) {
 //                    if(isOpponent){
-                        n.setId("shipHit");
+                    n.setId("shipHit");
 //                    }
 //                    else
 //                        n.setId("splash");
-                }
-                else if(square.isMiss())
+                } else if (square.isMiss())
                     n.setId("splash");
-                else if(square.isTarget())
+                else if (square.isTarget())
                     n.setId("targetCell");
                 else
                     n.setId(null);
-//            }
+            }
             n.setOnScroll((e) -> {
                 scroll();
                 drawBoard();
             });
             n.setOnMouseClicked(event -> {
                 if (event.getButton() == MouseButton.PRIMARY)
-                    if(isOpponent) {
+                    if (isOpponent) {
 //                        GameManager.getLogList().add(0, "Shot " + board.getSquares()[idx].getCoordinate());
 //
 //                        //  Confirm with opponent if hit
@@ -174,19 +167,19 @@ public class BoardView {
 //                        else
 //                            n.setId("splash");
 //                        drawBoard();
-                    }
-                    else
+                    } else
                         placeShip(idx);
             });
             i++;
         }
-        if(!isOpponent)
+        if (!isOpponent)
             drawShips();
     }
 
     int scrollCount = 0;
+
     public void scroll() {
-        if(scrollCount++ % 2 == 0)
+        if (scrollCount++ % 2 == 0)
             isSide = !isSide;
     }
 
@@ -205,7 +198,7 @@ public class BoardView {
                 Node node = pane.getChildren().get(i);
                 node.setId(sq.getShip().getName().toLowerCase());
                 node.getStyleClass().add("ship");
-                if(sq.isHit())
+                if (sq.isHit())
                     node.setId("shipHit");
                 int idx = i;
                 node.setOnMouseClicked(event -> {

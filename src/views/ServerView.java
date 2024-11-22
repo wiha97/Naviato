@@ -80,7 +80,6 @@ public class ServerView {
                     connectionStatus.setStyle("-fx-background-color: darkgreen; -fx-padding: 10px; -fx-background-radius: 5px;");
                     serverHandler = new ServerHandler(port, this);
                     serverHandler.startServer();
-                    ViewManager.planView();
                 } else {
                     connectionStatus.setText("Port must be above 1024 and below 65536");
                 }

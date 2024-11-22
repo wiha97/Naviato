@@ -6,6 +6,7 @@ public class Square {
     private boolean hit;
     private boolean miss;
     private boolean target;
+    private boolean sunk;
     private String coordinate;
 
     public Square(String xy){
@@ -57,6 +58,14 @@ public class Square {
 
     public boolean isMiss() {
         return miss;
+    }
+
+    public boolean isSunk() {
+        return sunk;
+    }
+
+    public void setSunk(boolean sunk) {
+        this.sunk = sunk;
     }
 
     public void setTarget(boolean target) {

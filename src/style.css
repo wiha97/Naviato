@@ -123,6 +123,9 @@
 	-fx-background-color:maroon;
 	-fx-text-fill:white;
 }
+#sunk{
+	-fx-background-color:gray;
+}
 .ship: hover{/*
 	-fx-border-width:5px;
 	-fx-border-color:white;

@@ -16,8 +16,10 @@ import models.GameBoard;
 import models.Ship;
 import models.Square;
 
+import javax.swing.text.View;
 import java.util.ArrayList;
 
+// WH
 public class BattlePlanView {
     private GameBoard board = GameManager.getGameBoard();
     private ObservableList<Ship> shipStock = board.getDeployable();
@@ -97,6 +99,7 @@ public class BattlePlanView {
                 }
                 boardView.drawBoard();
             }
+        GameManager.setRunning(false);
         };
         new Thread(runner).start();
     }
@@ -151,7 +154,7 @@ public class BattlePlanView {
             placeShips();
         });
         clrBtn.setOnMouseClicked((e) -> clearBoard());
-        playBtn.setOnMouseClicked((e) -> ViewManager.battleView());
+        playBtn.setOnMouseClicked((e) -> ViewManager.getBattleView().start(ViewManager.getBaseStage()));
 
 
         hBox.getChildren().addAll(boardView.playPane(playPane), SharedViews.logView(520));
