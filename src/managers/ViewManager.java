@@ -6,15 +6,15 @@ import views.*;
 
 public class ViewManager {
     private static Stage baseStage;
+    private static BattleView battleView = new BattleView();
 
     public static void start(Stage stage) {
         baseStage = stage;
         welcomeView();
-//        new WelcomeView().start(baseStage);
-//        stage.show();
     }
 
     public static void welcomeView(){
+
         new Welcome().start(baseStage);
     }
 
@@ -55,4 +55,11 @@ public class ViewManager {
         new GameOverView().start(baseStage);
     }
 
+    public static Stage getBaseStage() {
+        return baseStage;
+    }
+
+    public static BattleView getBattleView() {
+        return battleView;
+    }
 }

@@ -3,15 +3,16 @@ package network;
 import javafx.application.Platform;
 import managers.GameManager;
 import managers.ViewManager;
-import models.GameBoard;
 import models.Square;
+import util.App;
 import util.Print;
 import views.ClientView;
 
 import java.io.*;
 import java.net.Socket;
+
 //JJ
-public class ClientHandler implements Runnable{
+public class ClientHandler implements Runnable {
 
     //private final GameManager gameManager = new GameManager();
     private Square square;
@@ -31,55 +32,74 @@ public class ClientHandler implements Runnable{
     @Override
     public void run() {
         {
+            synchronized (this) {
 
 
-            try {
-                socket = new Socket(ip, port);
-                OutputStream output = socket.getOutputStream();
-                PrintWriter writer = new PrintWriter(output, true);
+                try {
+                    socket = new Socket(ip, port);
+                    OutputStream output = socket.getOutputStream();
+                    PrintWriter writer = new PrintWriter(output, true);
 
-                InputStream input = socket.getInputStream();
-                BufferedReader reader = new BufferedReader(new InputStreamReader(input));
+                    InputStream input = socket.getInputStream();
+                    BufferedReader reader = new BufferedReader(new InputStreamReader(input));
 
-                Platform.runLater(() ->ViewManager.planView());
+                    Platform.runLater(() -> ViewManager.planView());
+                    while (GameManager.isRunning()) {
+                        App.sleep(200);
+                        Print.line("Waiting...");
+                    }
+                    Platform.runLater(() -> ViewManager.getBattleView().start(ViewManager.getBaseStage()));
+                    App.sleep(200);
 
-                writer.println(GameManager.firstShot());
+                    String fs = GameManager.firstShot();
+                    Print.line("Sent: " + fs);
+                    writer.println(fs);
 
-                while (running) {
-                    int sliderSleep = (int) (ClientView.getSliderValue()*1000);
-                    Thread.sleep(sliderSleep);
+                    while (running) {
+//                        Platform.runLater(() -> ViewManager.getBattleView().loop());
+                        int sliderSleep = (int) (ClientView.getSliderValue() * 100);
+                        String incomingShot = reader.readLine();
 
-                    String incomingShot = reader.readLine();
-//                    System.out.println("Server: "+incomingShot);
-                    Print.line("Received: " + incomingShot);
-                    if (incomingShot != null) {
-                        String reply = GameManager.gameMessage(incomingShot);
-                        writer.println(reply);
-                        Print.line("Client: "+reply);
-                        String rc = GameManager.randomCoordinate();
-                        writer.println(rc);
-                        Print.line("Client: "+rc);
-//                        System.out.println("Client: "+reply);
-                    } else {
-                        Print.line("No more shots");
-//                        System.out.println("No more shots");
-                        break;
+                        if (incomingShot != null) {
+                            Print.line("Received: " + incomingShot);
+                            if (incomingShot.equals("game over"))
+                                break;
+                            if (incomingShot.length() > 2) {
+                                // Update board with new info (hit, miss, etc.)
+                                GameManager.receiveStatus(incomingShot);
+                            } else {
+                                String reply = GameManager.gameMessage(incomingShot);
+                                Print.line("Sent: " + reply);
+                                writer.println(reply);
+
+                                Thread.sleep(sliderSleep);
+
+                                String rc = GameManager.randomCoordinate();
+                                if (rc.length() > 2)
+                                    break;
+                                writer.println(rc);
+                                Print.line("Sent: " + rc);
+                            }
+                        }
+
+                        Platform.runLater(() -> ViewManager.getBattleView().update());
 
                     }
 
 
+                } catch (IOException | InterruptedException e) {
+                    Print.line("Error: " + e.getMessage());
 
+                } finally {
+                    disconnect();
                 }
-
-
-            } catch (IOException | InterruptedException e) {
-                Print.line("Error: "+e.getMessage() );
-
-            }finally {
-                disconnect();
+                Platform.runLater(() -> ViewManager.getBattleView().update());
+                App.sleep(3000);
+                Platform.runLater(() -> ViewManager.gameOverView());
             }
         }
     }
+
     public void disconnect() {
         running = false;
         try {
@@ -91,9 +111,6 @@ public class ClientHandler implements Runnable{
             Print.line("Error: " + e.getMessage());
         }
     }
-
-
-
 
 
 }

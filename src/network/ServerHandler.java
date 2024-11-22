@@ -1,11 +1,10 @@
 package network;
 
+import javafx.application.Platform;
 import managers.GameManager;
-import models.GameBoard;
-import models.Ship;
-import models.Square;
+import managers.ViewManager;
+import util.App;
 import util.Print;
-import views.ClientView;
 import views.ServerView;
 
 import java.io.*;
@@ -21,33 +20,40 @@ public class ServerHandler implements Runnable {
     private Socket clientSocket;
     private boolean running;
     private final ServerView serverView;
-    private final GameBoard gameBoard = GameManager.getGameBoard();
 
     public ServerHandler(int port, ServerView serverView) {
         this.port = port;
         this.serverView = serverView;
-        gameBoard.generateField();
     }
 
     @Override
     public void run() {
-        try {
-            serverSocket = new ServerSocket(port);
-            serverSocket.setReuseAddress(true);
-            running = true;
-            Print.line("Server started on port " + port);
+        synchronized (this) {
+            try {
+                serverSocket = new ServerSocket(port);
+                serverSocket.setReuseAddress(true);
+                running = true;
+                Print.line("Server started on port " + port);
 
-            while (running) {
-                clientSocket = serverSocket.accept();
-                Print.line("Client connected: " + clientSocket.getInetAddress());
-                serverView.updateConnectionStatus("Client connected!");
+                Platform.runLater(() -> ViewManager.planView());
+                while (GameManager.isRunning()) {
+                    App.sleep(200);
+                    Print.line("Waiting...");
+                }
 
-                handleClientCommunication(clientSocket);
+
+                while (running) {
+                    clientSocket = serverSocket.accept();
+                    Print.line("Client connected: " + clientSocket.getInetAddress());
+                    serverView.updateConnectionStatus("Client connected!");
+
+                    handleClientCommunication(clientSocket);
+                }
+            } catch (IOException e) {
+                Print.line("Error: " + e.getMessage());
+            } finally {
+                stopServer();
             }
-        } catch (IOException e) {
-            Print.line("Error: " + e.getMessage());
-        } finally {
-            stopServer();
         }
     }
 
@@ -59,30 +65,38 @@ public class ServerHandler implements Runnable {
                 BufferedReader reader = new BufferedReader(new InputStreamReader(input))
         ) {
             while (running) {
-                int sliderSleep = (int) (ServerView.getSliderValue() * 1000);
-                try {
-                    Thread.sleep(sliderSleep);
-                } catch (InterruptedException e) {
-                    Print.line("Sleep interrupted: " + e.getMessage());
-                    break;
-                }
-
+                int sliderSleep = (int) (ServerView.getSliderValue() * 100);
                 String incomingMessage = reader.readLine();
+
                 if (incomingMessage != null) {
-                    Print.line("Received: " + incomingMessage);
-                    String response = GameManager.gameMessage(incomingMessage);
-                    Print.line("Sent: " + response);
-                    writer.println(response);
-                    String rc = GameManager.randomCoordinate();
-                    writer.println(rc);
-                    Print.line("sent: " + rc);
+
+
+                    if (incomingMessage.equals("game over"))
+                        break;
+                    if (incomingMessage.startsWith("i") || incomingMessage.length() < 4) {
+                        String reply = GameManager.gameMessage(incomingMessage);
+                        Print.line("Client: " + reply);
+                        writer.println(reply);
+                        Thread.sleep(sliderSleep);
+                        String rc = GameManager.randomCoordinate();
+                        writer.println(rc);
+                        Print.line("client: " + rc);
+                    } else {
+                        // Update board with new info (hit, miss, etc.)
+                        GameManager.receiveStatus(incomingMessage);
+                    }
                 } else {
                     break;
                 }
+                Platform.runLater(() -> ViewManager.getBattleView().update());
             }
-        } catch (IOException e) {
+        } catch (IOException | InterruptedException e) {
             Print.line("Communication error: " + e.getMessage());
         }
+        stopServer();
+        Platform.runLater(() -> ViewManager.getBattleView().update());
+        App.sleep(3000);
+        Platform.runLater(() -> ViewManager.gameOverView());
     }
 
 

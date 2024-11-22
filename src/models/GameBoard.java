@@ -2,6 +2,7 @@ package models;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import views.BoardView;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -15,10 +16,10 @@ public class GameBoard {
     private ObservableList<Ship> deployable = FXCollections.observableList(ships);
     private final String chars = "abcdefghij";
     private final char[] chArr = chars.toCharArray();
+    private BoardView view;
 
     public GameBoard() {
         generateField();
-        fillShips();
     }
 
     public void generateField() {

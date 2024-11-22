@@ -1,5 +1,5 @@
 <p align="center">
-    <img src="assets/naviato.svg"/>
+    <img src="assets/naviato-outline.svg"/>
 </p>
 
 ## A Battleship game made in Java

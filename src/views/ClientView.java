@@ -24,9 +24,6 @@ public class ClientView {
 
     public void start(Stage stage) {
 
-        GameBoard gameBoard = new GameBoard();
-        gameBoard.generateField();
-
         VBox mainBox = new VBox();
         mainBox.setSpacing(40);
         mainBox.setBackground(new Background(new BackgroundFill(Color.DODGERBLUE,null,null)));

@@ -1,12 +1,9 @@
 package views;
 
-import javafx.collections.ListChangeListener;
-import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
-import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -14,6 +11,7 @@ import javafx.stage.Stage;
 import managers.GameManager;
 import models.GameBoard;
 
+//    WH
 public class BattleView {
     private GameBoard opponentBoard = GameManager.getTargetBoard();
     private GameBoard playerBoard = GameManager.getGameBoard();
@@ -31,8 +29,13 @@ public class BattleView {
         stage.setHeight(820);
     }
 
+    public void update(){
+        playerView.drawBoard();
+        targetView.drawBoard();
+    }
+
     private VBox basePane(){
-        opponentBoard.generateField();
+//        opponentBoard.generateField();
         VBox vBox = new VBox();
         vBox.setId("basePane");
         vBox.setAlignment(Pos.TOP_CENTER);
@@ -40,12 +43,11 @@ public class BattleView {
         title.setId("title");
 
         VBox listBox = new VBox();
-        listBox.getChildren().addAll(SharedViews.shipYard(opponentBoard.getDeployable()));
+        listBox.getChildren().addAll(SharedViews.shipYard(GameManager.getTargetBoard().getDeployable()));
         listBox.setMinHeight(20);
         listBox.setAlignment(Pos.CENTER);
         listBox.setMaxWidth(400);
         listBox.setId("shipYard");
-//        listBox.setStyle("-fx-background-color:#272727;");
 
 
         HBox content = new HBox();
@@ -67,8 +69,6 @@ public class BattleView {
         playerView.drawBoard();
         playPane.setMouseTransparent(true);
         playPane.setCursor(Cursor.DEFAULT);
-        playerView.loop();
-        targetView.loop();
 
         content.getChildren().addAll(trgtBox, playBox);
 
