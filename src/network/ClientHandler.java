@@ -57,7 +57,7 @@ public class ClientHandler implements Runnable {
 
                     while (running) {
 //                        Platform.runLater(() -> ViewManager.getBattleView().loop());
-                        int sliderSleep = (int) (ClientView.getSliderValue() * 100);
+                        int sliderSleep = (int) (ClientView.getSliderValue() * 1000);
                         String incomingShot = reader.readLine();
 
                         if (incomingShot != null) {
