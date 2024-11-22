@@ -65,7 +65,7 @@ public class ServerHandler implements Runnable {
                 BufferedReader reader = new BufferedReader(new InputStreamReader(input))
         ) {
             while (running) {
-                int sliderSleep = (int) (ServerView.getSliderValue() * 100);
+                int sliderSleep = (int) (ServerView.getSliderValue() * 1000);
                 String incomingMessage = reader.readLine();
 
                 if (incomingMessage != null) {

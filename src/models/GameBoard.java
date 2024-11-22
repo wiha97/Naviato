@@ -114,9 +114,9 @@ public class GameBoard {
 
     private boolean validateSidePos(int pos, Ship ship) {
         if (pos - 1 >= 0) {
-            if (containsShip(pos - 1))
+            if (containsShip(pos - 1) && (pos) % 10 != 0 )
                 return false;
-            if (topBotContainsShip(pos - 1))
+            if (topBotContainsShip(pos - 1) && (pos) % 10 != 0 )
                 return false;
         }
         for (int i = pos; i < pos + ship.getSize(); i++) {
